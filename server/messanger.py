@@ -1,10 +1,6 @@
-from typing import List
-
 from flask import Blueprint, \
     render_template, redirect, url_for
 from flask_login import login_required, current_user
-from flask_sqlalchemy import get_debug_queries
-from sqlalchemy import or_, and_
 
 from database import Channel, User, db
 
@@ -12,6 +8,7 @@ messanger = Blueprint("messanger", __name__,
                       url_prefix="/messanger",
                       template_folder="templates/messanger",
                       static_folder="static/messanger")
+
 
 @messanger.route("/channels")
 @messanger.route("/channels/<int:page>")
