@@ -1,10 +1,11 @@
 from typing import List
 
-from flask import Blueprint, render_template
+from flask import Blueprint, \
+    render_template, redirect, url_for
 from flask_login import login_required, current_user
 from sqlalchemy import or_, and_
 
-from database import Channel, User
+from database import Channel, User, db
 
 messanger = Blueprint("messanger", __name__,
                       url_prefix="/messanger",
@@ -48,13 +49,33 @@ def get_all_channels(page: int = 0, page_size: int = 10) -> List[Channel]:
 @login_required
 def channels(page: int = 0):
     number_on_page = 10
-    number_of_pages = (get_all_user_channels().count() + number_on_page - 1) // number_on_page
+    number_of_pages = (get_all_user_channels(current_user).count() + number_on_page - 1) // number_on_page
     user_channels = get_all_channels(page, number_on_page)
     return render_template("channels.html", page=page, number_of_pages=number_of_pages, channels=user_channels)
+
+
+@messanger.route("/make_channel/<int:other_id>")
+@login_required
+def create_channel(other_id: int):
+    other = User.query.get_or_404(other_id)
+    ch = get_all_users_channels(current_user, other).first()
+    if ch is not None:
+        return redirect(url_for("messanger.channel", channel_id=ch.id))
+
+    new_channel = Channel(first_user=current_user.id, second_user=other.id)
+    db.session.add(new_channel)
+    db.session.commit()
+
+    return redirect(url_for("messanger.channel", channel_id=new_channel.id))
 
 
 @messanger.route("/channel/<int:channel_id>")
 @login_required
 def channel(channel_id: int):
-    # TODO
-    pass
+    current_channel = Channel.query.get_or_404(channel_id)
+    first_user = User.query.get_or_404(current_channel.first_user)
+    second_user = User.query.get_or_404(current_channel.second_user)
+    return render_template("channel.html",
+                           channel=current_channel,
+                           first_user=first_user,
+                           second_user=second_user)

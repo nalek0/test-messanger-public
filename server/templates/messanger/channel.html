@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Channel between {{ first_user.full_name() }} and {{ second_user.full_name() }}
+{% endblock %}
+
+{% block content %}
+    <h1>Channel between {{ first_user.full_name() }} and {{ second_user.full_name() }}</h1>
+{% endblock %}

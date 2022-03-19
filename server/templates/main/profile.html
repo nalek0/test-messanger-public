@@ -10,5 +10,5 @@
         <li>Last name: {{ user.last_name }}</li>
     </ul>
     <br>
-    <a href="url" class="link"></a>
+    <a href="{{ url_for('messanger.create_channel', other_id=user.id) }}" class="link">Start chatting</a>
 {% endblock %}

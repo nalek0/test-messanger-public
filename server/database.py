@@ -14,6 +14,9 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return '<User %r>' % self.username
 
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
 
 class Channel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
