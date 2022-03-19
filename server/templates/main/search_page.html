@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Search
+{% endblock %}
+
+{% block content %}
+    <form action="/search" method="post">
+        <input type="text" name="query" placeholder="Search somebody">
+        <input type="submit" value="Search">
+    </form>
+    <h2>Recommendations:</h2>
+    {% if recommendations|length %}
+        {% for user in recommendations %}
+            <a href="{{ url_for('main.profile', username=user.username) }}">{{ user.first_name }} {{ user.last_name }}</a> <br>
+        {% endfor %}
+    {% else %}
+        <span>No recommendations</span>
+    {% endif %}
+{% endblock %}

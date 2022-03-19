@@ -29,7 +29,9 @@ def signup_post():
     password = request.form.get('password')
 
     if User.query.filter_by(username=username).first() is not None:
-        return redirect(url_for("auth.signup_get", error="username is already taken"))
+        return redirect(url_for("auth.signup_get", error="Username is already taken"))
+    if not username.isalpha():
+        return redirect(url_for("auth.signup_get", error="Username must contain only letters"))
 
     new_user = User(
         first_name=first_name,
@@ -44,7 +46,7 @@ def signup_post():
 
     next_url = request.form.get('next')
 
-    return redirect(next_url or url_for("main.profile"))
+    return redirect(next_url or url_for("main.profile", username=new_user.username))
 
 
 @auth.route("/login", methods=["GET"])
@@ -67,7 +69,7 @@ def login_post():
 
     next_url = request.form.get('next')
 
-    return redirect(next_url or url_for("main.profile"))
+    return redirect(next_url or url_for("main.profile", username=user.username))
 
 
 @auth.route("/logout")
