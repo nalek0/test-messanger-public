@@ -1,9 +1,16 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    Channel between {{ first_user.full_name() }} and {{ second_user.full_name() }}
+    Channel
 {% endblock %}
 
 {% block content %}
-    <h1>Channel between {{ first_user.full_name() }} and {{ second_user.full_name() }}</h1>
+    <h2>Members:</h2>
+    <ul>
+        {% for member in channel.members %}
+            <li>
+                <a href="{{ url_for('main.profile', username=member.username) }}" class="link">{{ member.full_name() }}</a>
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}

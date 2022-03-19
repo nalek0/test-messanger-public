@@ -3,13 +3,23 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+channel_association_table = db.Table(
+    'channel_association',
+    db.Column('user.id', db.ForeignKey('user.id')),
+    db.Column('channel.id', db.ForeignKey('channel.id'))
+)
+
 
 class User(UserMixin, db.Model):
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(80), nullable=False)
     last_name = db.Column(db.String(80), nullable=False)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(80), nullable=False)
+    password_hash = db.Column(db.String(64), nullable=False)
+    channels = db.relationship("Channel",
+                               secondary=channel_association_table,
+                               backref="members")
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -19,9 +29,10 @@ class User(UserMixin, db.Model):
 
 
 class Channel(db.Model):
+    __tablename__ = 'channel'
     id = db.Column(db.Integer, primary_key=True)
-    first_user = db.Column(db.Integer, nullable=False)
-    second_user = db.Column(db.Integer, nullable=False)
+
+    # members = ...
 
     def __repr__(self):
         return f"<Channel {self.id}>"

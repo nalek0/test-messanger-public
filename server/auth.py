@@ -1,6 +1,7 @@
 from flask import Blueprint, \
     request, redirect, url_for, render_template
 from flask_login import login_user, logout_user
+import hashlib
 
 from database import db, User
 from login_manager import login_manager
@@ -37,7 +38,7 @@ def signup_post():
         first_name=first_name,
         last_name=last_name,
         username=username,
-        password=password
+        password_hash=hashlib.sha256(password.encode('utf-8')).hexdigest()
     )
     db.session.add(new_user)
     db.session.commit()
@@ -62,7 +63,7 @@ def login_post():
     user = User.query.filter_by(username=username).first()
     if user is None:
         return redirect(url_for("auth.login_get", error="No user with given username is found"))
-    if user.password != password:
+    if user.password_hash != hashlib.sha256(password.encode('utf-8')).hexdigest():
         return redirect(url_for("auth.login_get", error="Wrong password"))
 
     login_user(user, remember=True)
