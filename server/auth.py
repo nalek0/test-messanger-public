@@ -1,6 +1,6 @@
 from flask import Blueprint, \
     request, redirect, url_for, render_template
-from flask_login import login_user, logout_user, LoginManager
+from flask_login import login_user, logout_user
 
 from database import db, User
 from login_manager import login_manager
@@ -29,7 +29,7 @@ def signup_post():
     password = request.form.get('password')
 
     if User.query.filter_by(username=username).first() is not None:
-        return redirect(url_for("signup", error="username is already taken"))
+        return redirect(url_for("auth.signup_get", error="username is already taken"))
 
     new_user = User(
         first_name=first_name,
@@ -44,7 +44,7 @@ def signup_post():
 
     next_url = request.form.get('next')
 
-    return redirect(next_url or "/profile")
+    return redirect(next_url or url_for("main.profile"))
 
 
 @auth.route("/login", methods=["GET"])
@@ -59,18 +59,18 @@ def login_post():
 
     user = User.query.filter_by(username=username).first()
     if user is None:
-        return redirect(url_for("login", error="No user with given username is found"))
+        return redirect(url_for("auth.login_get", error="No user with given username is found"))
     if user.password != password:
-        return redirect(url_for("login", error="Wrong password"))
+        return redirect(url_for("auth.login_get", error="Wrong password"))
 
     login_user(user, remember=True)
 
     next_url = request.form.get('next')
 
-    return redirect(next_url or "/profile")
+    return redirect(next_url or url_for("main.profile"))
 
 
 @auth.route("/logout")
 def logout():
     logout_user()
-    return redirect(url_for("index"))
+    return redirect(url_for("main.index"))
