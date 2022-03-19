@@ -4,17 +4,25 @@
     Sign up
 {% endblock %}
 
+{% block top_stylesheets %}
+    <link rel="stylesheet" href="{{ url_for('auth.static', filename='auth.css') }}">
+{% endblock %}
+
 {% block content %}
-    <form method="post">
-        <input type="text" name="first_name" placeholder="First name" /> <br>
-        <input type="text" name="last_name" placeholder="Last name" /> <br>
-        <input type="text" name="username" placeholder="Username" /> <br>
-        <input type="password" name="password" placeholder="Password"/> <br>
-        <input type="submit" value="Submit"> <br>
-    </form>
+    <div class="auth-form">
+        <form method="post">
+            <input type="text" name="first_name" placeholder="First name" /> <br>
+            <input type="text" name="last_name" placeholder="Last name" /> <br>
+            <input type="text" name="username" placeholder="Username" /> <br>
+            <input type="password" name="password" placeholder="Password"/> <br>
+            <input type="submit" value="Submit"> <br>
+        </form>
+        <a href="{{ url_for('auth.login_get') }}" class="link">Or you already have an account</a>
+    </div>
+
     {% if error == None %}
-        <div>No errors</div>
     {% else %}
-        <div>Error: {{ error }}</div>
+        <div class="error_message">{{ error }}</div>
     {% endif %}
+
 {% endblock %}

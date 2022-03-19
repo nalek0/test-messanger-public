@@ -9,11 +9,11 @@
 <body>
     <header>
         <div class="top_part">
-            <span class="top_link big"><a href="/" class="link">Index</a></span>
+            <span class="top_link big"><a href="{{ url_for('main.index') }}" class="link">Index</a></span>
         </div>
         <div class="top_part">
-            <span class="top_link small"><a href="/auth/signup" class="link">Sign up</a></span>
-            <span class="top_link small"><a href="/auth/logout" class="link">Log out</a></span>
+            <span class="top_link small"><a href="{{ url_for('auth.signup_get') }}" class="link">Sign up</a></span>
+            <span class="top_link small"><a href="{{ url_for('auth.logout') }}" class="link">Log out</a></span>
         </div>
     </header>
     <content>{% block content %}{% endblock %}</content>
