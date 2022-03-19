@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Channels: {{ page }} / {{ number_of_pages }}
+{% endblock %}
+
+{% block content %}
+    {% if channels|length %}
+        <h2>Results</h2>
+        <ul>
+            {% for channel in channels %}
+                <a href="{{ url_for('messanger.channel', channel_id=channel.id) }}" class="link">{{ channel.first_user }} - {{ channel.second_user }}</a>
+            {% endfor %}
+        </ul>
+    {% else %}
+        {% if page == 0 %}
+            <h4>You have no channels, maybe make some?</h4>
+        {% else %}
+            <h4>No channels found on this page</h4>
+        {% endif %}
+    {% endif %}
+
+    {% if page > 0 %}
+        <a href="{{ url_for('messanger.channels', page=(page - 1)) }}" class="link">Previous page</a>
+    {% endif %}
+    {% if page < (number_of_pages - 1) %}
+        <a href="{{ url_for('messanger.channels', page=(page + 1)) }}" class="link">Next page</a>
+    {% endif %}
+{% endblock %}

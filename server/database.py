@@ -13,3 +13,12 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+
+
+class Channel(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    first_user = db.Column(db.Integer, nullable=False)
+    second_user = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return f"<Channel {self.id}>"
