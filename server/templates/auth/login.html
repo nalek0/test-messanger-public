@@ -1,9 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %}
+    Log in
+{% endblock %}
+
+{% block content %}
     <form method="post">
         <input type="text" name="username" placeholder="Username" /> <br>
         <input type="password" name="password" placeholder="Password"/> <br>
@@ -14,5 +15,4 @@
     {% else %}
         <div>Error: {{ error }}</div>
     {% endif %}
-</body>
-</html>
+{% endblock %}

@@ -1,0 +1,67 @@
+:root {
+    --background-color: white;
+    --header-color: #aaf;
+
+    --text-color: black;
+
+    --link-color: #333;
+    --link-hover-color: #555;
+    --link-click-color: #222;
+
+    --font-size: 15px;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    background: var(--background-color);
+    color: var(--text-color);
+    font-size: var(--font-size);
+}
+
+header {
+    background: var(--header-color);
+
+    padding: 0.3rem;
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.top_part {
+    display: inline-block;
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    align-content: flex-start;
+}
+
+.top_link.big {
+    font-size: 2rem;
+    margin: 0.2rem;
+}
+.top_link.small {
+    font-size: 1.5rem;
+    margin: 0.1rem;
+}
+
+a.link {
+    color: var(--link-color);
+    text-decoration: none;
+}
+a.link:hover {
+    color: var(--link-hover-color);
+    text-decoration: underlined;
+}
+a.link:active {
+    color: var(--link-click-color);
+    text-decoration: underlined;
+}
+
+content {
+    display: block;
+    margin: 1rem;
+}
