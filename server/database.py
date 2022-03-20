@@ -1,10 +1,11 @@
+import datetime as datetime
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-channel_association_table = db.Table(
-    'channel_association',
+channel_membership_association_table = db.Table(
+    'channel_membership',
     db.Column('user.id', db.ForeignKey('user.id')),
     db.Column('channel.id', db.ForeignKey('channel.id'))
 )
@@ -18,8 +19,9 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(64), nullable=False)
     channels = db.relationship("Channel",
-                               secondary=channel_association_table,
+                               secondary=channel_membership_association_table,
                                backref="members")
+    messages = db.relationship("Message", backref='author', lazy=True)
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -31,8 +33,20 @@ class User(UserMixin, db.Model):
 class Channel(db.Model):
     __tablename__ = 'channel'
     id = db.Column(db.Integer, primary_key=True)
-
-    # members = ...
+    # members: List[User]
+    messages = db.relationship("Message", backref='channel', lazy=True)
 
     def __repr__(self):
         return f"<Channel {self.id}>"
+
+
+class Message(db.Model):
+    __tablename__ = 'message'
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.String(1000), nullable=False)
+    datetime = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def __repr__(self):
+        return f"<Message {self.id}>"

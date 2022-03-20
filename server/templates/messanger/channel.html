@@ -13,4 +13,15 @@
             </li>
         {% endfor %}
     </ul>
+    <h2>Messages:</h2>
+    <ul>
+        {% for message in channel.messages %}
+            <li>
+                <div>
+                    <a href="{{ url_for('main.profile', username=member.username) }}" class="link">{{ message.author.full_name() }}</a> {{ message.datetime }}
+                </div>
+                <div>{{ message.text }}</div>
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}

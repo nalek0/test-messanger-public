@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block top_stylesheets %}
+    <link rel="stylesheet" href="{{ url_for('messanger.static', filename='channels.css') }}">
+{% endblock %}
+
 {% block title %}
     Channels: {{ page }} / {{ number_of_pages }}
 {% endblock %}
@@ -7,11 +11,14 @@
 {% block content %}
     {% if channels|length %}
         <h2>Results</h2>
-        <ul>
-            {% for channel in channels %}
-                <a href="{{ url_for('messanger.channel', channel_id=channel.id) }}" class="link">{{ channel.first_user.full_name() }} - {{ channel.second_user.full_name() }}</a>
-            {% endfor %}
-        </ul>
+        {% for channel in channels %}
+            <a href="{{ url_for('messanger.channel', channel_id=channel.id) }}">
+                <div class="channel_block">
+                    With members:
+                    {% for member in channel.members %} {{ member.full_name() }} {% endfor %}
+                </div>
+            </a>
+        {% endfor %}
     {% else %}
         {% if page == 0 %}
             <h4>You have no channels, maybe make some?</h4>
