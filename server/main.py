@@ -17,13 +17,13 @@ def index():
 @login_required
 def profile(username: str):
     user = User.query.filter_by(username=username).first_or_404()
-    return render_template("profile.html", user=user)
+    return render_template("profile.html", user=user, client_user=current_user)
 
 
 @main.route("/profile")
 @login_required
 def client_profile():
-    return render_template("profile.html", user=current_user)
+    return render_template("personal-profile.html", user=current_user)
 
 
 @main.route("/search")

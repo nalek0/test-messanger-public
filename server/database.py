@@ -6,9 +6,15 @@ db = SQLAlchemy()
 
 channel_membership_association_table = db.Table(
     'channel_membership',
-    db.Column('user.id', db.ForeignKey('user.id')),
-    db.Column('channel.id', db.ForeignKey('channel.id'))
+    db.Column('user.id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('channel.id', db.Integer, db.ForeignKey('channel.id'))
 )
+
+# user_friendship_association_table = db.Table(
+#     'user_friendship',
+#     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+#     db.Column('user_fid', db.Integer, db.ForeignKey('user.id'))
+# )
 
 
 class User(UserMixin, db.Model):
@@ -22,6 +28,11 @@ class User(UserMixin, db.Model):
                                secondary=channel_membership_association_table,
                                backref="members")
     messages = db.relationship("Message", backref='author', lazy=True)
+
+    friend_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    friends = db.relationship("User",
+                              lazy="joined",
+                              join_depth=2)
 
     def __repr__(self):
         return '<User %r>' % self.username

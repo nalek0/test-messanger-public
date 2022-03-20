@@ -7,6 +7,7 @@ from login_manager import login_manager
 from auth import auth as auth_blueprint
 from main import main as main_blueprint
 from messanger import messanger as messanger_blueprint
+from api import api as api_blueprint
 
 config = ConfigParser()
 config.read("flask.config")
@@ -22,6 +23,7 @@ login_manager.init_app(app)
 app.register_blueprint(auth_blueprint)
 app.register_blueprint(main_blueprint)
 app.register_blueprint(messanger_blueprint)
+app.register_blueprint(api_blueprint)
 
 if __name__ == "__main__":
     app.run(host=config["RunConfig"]["host"],
