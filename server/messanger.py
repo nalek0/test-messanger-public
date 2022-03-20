@@ -1,5 +1,5 @@
 from flask import Blueprint, \
-    render_template, redirect, url_for
+    render_template, redirect, url_for, request, abort
 from flask_login import login_required, current_user
 
 from database import Channel, User, db
@@ -14,12 +14,13 @@ messanger = Blueprint("messanger", __name__,
 @messanger.route("/channels/<int:page>")
 @login_required
 def channels(page: int = 0):
-    return render_template("channels.html", page=page, number_of_pages=1, channels=current_user.channels)
+    return render_template("channels.html", page=page, number_of_pages=1, client_user=current_user)
 
 
-@messanger.route("/make_channel/<int:other_id>")
+@messanger.route("/make_channel", methods=["POST"])
 @login_required
-def create_channel(other_id: int):
+def create_channel():
+    other_id = request.form.get("companion-list") or abort(400)
     other_user = User.query.get_or_404(other_id)
 
     new_channel = Channel()

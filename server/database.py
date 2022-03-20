@@ -5,21 +5,22 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 channel_membership_association_table = db.Table(
-    'channel_membership',
+    'channel_membership_association_table',
     db.Column('user.id', db.Integer, db.ForeignKey('user.id')),
     db.Column('channel.id', db.Integer, db.ForeignKey('channel.id'))
 )
 
-# user_friendship_association_table = db.Table(
-#     'user_friendship',
-#     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-#     db.Column('user_fid', db.Integer, db.ForeignKey('user.id'))
-# )
+user_friendship_association_table = db.Table(
+    'user_friendship_association_table',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('friend_id', db.Integer, db.ForeignKey('user.id'))
+)
 
 
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
+    fid = db.Column(db.Integer, unique=True, autoincrement=True)
     first_name = db.Column(db.String(80), nullable=False)
     last_name = db.Column(db.String(80), nullable=False)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -29,10 +30,11 @@ class User(UserMixin, db.Model):
                                backref="members")
     messages = db.relationship("Message", backref='author', lazy=True)
 
-    friend_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    friends = db.relationship("User",
-                              lazy="joined",
-                              join_depth=2)
+    friends = db.relationship('User',
+                              secondary=user_friendship_association_table,
+                              primaryjoin=(user_friendship_association_table.c.user_id == id),
+                              secondaryjoin=(user_friendship_association_table.c.friend_id == id),
+                              lazy='dynamic')
 
     def __repr__(self):
         return '<User %r>' % self.username

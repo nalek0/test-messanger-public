@@ -9,9 +9,22 @@
 {% endblock %}
 
 {% block content %}
-    {% if channels|length %}
+    {% if client_user.friends.count() != 0 %}
+        <form action="{{ url_for('messanger.create_channel') }}" method="post">
+            <label for="companion-list">Choose companion:</label>
+            <select name="companion-list" id="companion-list">
+                {% for friend in client_user.friends %}
+                    <option value="{{ friend.id }}">{{ friend.full_name() }}</option>
+                {% endfor %}
+            </select> <br>
+            <input type="submit" value="Create a new channel">
+        </form>
+    {% else %}
+        <h2>You have no friends, try to find few to make a new channel</h2>
+    {% endif %}
+    {% if client_user.channels|length %}
         <h2>Results</h2>
-        {% for channel in channels %}
+        {% for channel in client_user.channels %}
             <a href="{{ url_for('messanger.channel', channel_id=channel.id) }}">
                 <div class="channel_block">
                     With members:
