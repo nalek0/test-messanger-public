@@ -15,14 +15,19 @@
 
 {% block content %}
     <div class="main_part">
+        {% if client_user is defined and user.id == client_user.id %}
+            <i>Here you can see, how other people see your profile page:</i>
+        {% endif %}
         <h1>Profile:</h1>
         <div class="paragraph">First name: {{ user.first_name }}</div>
         <div class="paragraph">Last name: {{ user.last_name }}</div>
         <div class="paragraph">Description: {{ user.description }}</div>
 
-        <div class="paragraph centered">
-            <input type="submit" class="base_input base_submit_input" value="Add to friends" onclick="add_friend({{ user.id }})">
-            <input type="submit" class="base_input base_submit_input" value="Remove from friends" onclick="remove_friend({{ user.id }})">
-        </div>
+        {% if client_user is defined and user.id != client_user.id %}
+            <div class="paragraph centered">
+                <input type="submit" class="base_input base_submit_input" value="Add to friends" onclick="add_friend({{ user.id }})">
+                <input type="submit" class="base_input base_submit_input" value="Remove from friends" onclick="remove_friend({{ user.id }})">
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
