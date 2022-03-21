@@ -1,7 +1,10 @@
 :root {
     --background-color: white;
     --header-color: #aaf;
+
     --accent-color: #aaf;
+    --darken-accent-color: #88c;
+    --lighten-accent-color: #ccf;
 
     --text-color: black;
 

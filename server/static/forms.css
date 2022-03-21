@@ -14,6 +14,7 @@ form.centered_content {
     text-align: center;
 }
 
+textarea,
 input[type=text].base_input,
 input[type=password].base_input,
 input[type=submit].base_input {
@@ -24,6 +25,29 @@ input[type=submit].base_input {
     outline: none;
     color: black;
     margin: 0.25rem;
+}
+
+textarea.base_textarea {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    height: 5rem;
+    resize: none;
+}
+
+.accent-scrollbar::-webkit-scrollbar,
+.accent-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.accent-scrollbar::-webkit-scrollbar {
+    width: 5px;
+}
+.accent-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--darken-accent-color);
+
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
 }
 
 input.base_text_input {
@@ -39,10 +63,10 @@ input.base_submit_input {
     margin-right: auto;
 }
 input.base_submit_input:hover {
-    filter: brightness(110%);
+    background: var(--lighten-accent-color);
 }
 input.base_submit_input:active {
-    filter: brightness(90%);
+    background: var(--darken-accent-color);
 }
 
 input.base_checkbox_input {

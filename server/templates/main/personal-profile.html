@@ -28,19 +28,18 @@
                    name="first_name"
                    class="base_input base_text_input"
                    value="{{ user.first_name }}"
-                   maxlength="80" required>
+                   maxlength="80" required />
             <div class="label">Last name:</div>
             <input type="text"
                    name="last_name"
                    class="base_input base_text_input"
                    value="{{ user.last_name }}"
-                   maxlength="80" required>
+                   maxlength="80" required />
             <div class="label">Description:</div>
-            <input type="text"
-                   name="description"
-                   class="base_input base_text_input"
-                   value="{{ user.description }}"
-                   maxlength="400">
+            <textarea name="description"
+                      class="base_input base_textarea accent-scrollbar"
+                      value="{{ user.description }}"
+                      maxlength="400"></textarea>
             <input type="submit" value="Send changes" class="base_input base_submit_input" onclick="update_profile(this)">
         </div>
     </div>
