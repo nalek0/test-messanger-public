@@ -1,7 +1,7 @@
 .paragraph:before {
     content: " ";
-    display: inline;
-    width: 3rem;
+    display: inline-block;
+    width: 2rem;
 }
 
 .paragraph.centered {
