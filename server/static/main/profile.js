@@ -1,10 +1,15 @@
 function add_friend(user_id) {
-	var xhr = new XMLHttpRequest();
-	xhr.open('POST', '/api/user/add-friend', true);
+	let xhr = new XMLHttpRequest();
+	xhr.open('POST', '/api/user/add_friend', true);
 	xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
 	xhr.onload = function () {
-		alert(this.status);
+		if (this.status === 200) {
+			let response = JSON.parse(this.response);
+			alert(response["description"]);
+		}
+		else
+			alert("Error with error code: " + this.status);
 	};
 
 	xhr.send(JSON.stringify({
@@ -13,12 +18,17 @@ function add_friend(user_id) {
 }
 
 function remove_friend(user_id) {
-	var xhr = new XMLHttpRequest();
-	xhr.open('POST', '/api/user/remove-friend', true);
+	let xhr = new XMLHttpRequest();
+	xhr.open('POST', '/api/user/remove_friend', true);
 	xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
 	xhr.onload = function () {
-		alert(this.status);
+		if (this.status === 200) {
+			let response = JSON.parse(this.response);
+			alert(response["description"]);
+		}
+		else
+			alert("Error with error code: " + this.status);
 	};
 
 	xhr.send(JSON.stringify({

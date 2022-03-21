@@ -36,3 +36,11 @@ input[type=submit].base_submit_input {
     margin-left: auto;
     margin-right: auto;
 }
+
+input[type=submit].base_submit_input:hover {
+    filter: brightness(110%);
+}
+
+input[type=submit].base_submit_input:active {
+    filter: brightness(90%);
+}

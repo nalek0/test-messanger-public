@@ -7,7 +7,24 @@ user_api = Blueprint("user_api", __name__,
                      url_prefix="/user")
 
 
-@user_api.route("/add-friend", methods=["POST"])
+@user_api.route("/update_profile", methods=["POST"])
+@login_required
+def update_profile():
+    first_name = request.json.get("first_name")
+    last_name = request.json.get("last_name")
+    if first_name is None or last_name is None:
+        return abort(400)
+
+    current_user.first_name = first_name
+    current_user.last_name = last_name
+    db.session.commit()
+
+    return {
+        "description": "OK"
+    }
+
+
+@user_api.route("/add_friend", methods=["POST"])
 @login_required
 def add_friend():
     user_id = request.json.get("user_id") or abort(400)
@@ -24,7 +41,7 @@ def add_friend():
         }
 
 
-@user_api.route("/remove-friend", methods=["POST"])
+@user_api.route("/remove_friend", methods=["POST"])
 @login_required
 def remove_friend():
     user_id = request.form["user_id"] or abort(400)
