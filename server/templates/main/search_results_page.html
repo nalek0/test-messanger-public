@@ -4,13 +4,38 @@
     Search results for {{ query }}
 {% endblock %}
 
+{% block top_stylesheets %}
+    <style>
+        .user_block {
+            display: inline-block;
+            width: 30em;
+            max-width: 100%;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            position: relative;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
-    <h2>Results:</h2>
-    {% if results|length %}
-        {% for user in results %}
-            <a href="{{ url_for('main.profile', username=user.username) }}" class="link">{{ user.first_name }} {{ user.last_name }} ({{ user.username }})</a> <br>
-        {% endfor %}
-    {% else %}
-        <span>No results</span>
-    {% endif %}
+    <div class="main_part">
+        <h2>Results:</h2>
+        {% if results|length %}
+            {% for user in results %}
+                <div class="paragraph">
+                    <a href="{{ url_for('main.profile', username=user.username) }}" class="link">
+                        <div class="user_block">
+                            <b>({{ user.username }})</b>
+                            {{ user.first_name }}
+                            {{ user.last_name }}
+                            <i>{{ user.description }}</i>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="paragraph">No results</div>
+        {% endif %}
+    </div>
 {% endblock %}
