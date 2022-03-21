@@ -20,14 +20,24 @@ def channels(page: int = 0):
 @messanger.route("/make_channel", methods=["POST"])
 @login_required
 def create_channel():
-    other_id = request.form.get("companion-list") or abort(400)
-    other_user = User.query.get_or_404(other_id)
+    companions = request.form.get("companions")
+    if companions is None:
+        return abort(400)
+
+    other_users = list(map(
+        lambda companion: User.query.get_or_404(companion),
+        companions
+    ))
 
     new_channel = Channel()
     current_user.channels.append(new_channel)
-    other_user.channels.append(new_channel)
+    for user in other_users:
+        user.channels.append(new_channel)
+
     new_channel.members.append(current_user)
-    new_channel.members.append(other_user)
+    for user in other_users:
+        new_channel.members.append(user)
+
     db.session.add(new_channel)
     db.session.commit()
 

@@ -3,12 +3,15 @@ form.base_form {
     padding: 1rem;
     border: 0.1rem solid var(--accent-color);
     border-radius: 1rem;
-    text-align: center;
 }
 
 form.centered_form {
     margin-left: auto;
     margin-right: auto;
+}
+
+form.centered_content {
+    text-align: center;
 }
 
 input[type=text].base_input,
@@ -23,24 +26,37 @@ input[type=submit].base_input {
     margin: 0.25rem;
 }
 
-input[type=text].base_text_input,
-input[type=password].base_text_input {
+input.base_text_input {
     display: block;
     box-sizing: border-box;
     width: 100%;
 }
 
-input[type=submit].base_submit_input {
+input.base_submit_input {
     display: inline-block;
     cursor: pointer;
     margin-left: auto;
     margin-right: auto;
 }
-
-input[type=submit].base_submit_input:hover {
+input.base_submit_input:hover {
     filter: brightness(110%);
 }
-
-input[type=submit].base_submit_input:active {
+input.base_submit_input:active {
     filter: brightness(90%);
+}
+
+input.base_checkbox_input {
+    appearance: none;
+    width: 0.75em;
+    height: 0.75em;
+    cursor: pointer;
+
+    border: 0.1rem solid black;
+    border-radius: 0.2rem;
+    background: transparent;
+
+    margin: 0;
+}
+input.base_checkbox_input:checked {
+    background: var(--accent-color);
 }

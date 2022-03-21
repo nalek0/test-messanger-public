@@ -19,5 +19,10 @@
         <div class="paragraph">First name: {{ user.first_name }}</div>
         <div class="paragraph">Last name: {{ user.last_name }}</div>
         <div class="paragraph">Description: {{ user.description }}</div>
+
+        <div class="paragraph centered">
+            <input type="submit" class="base_input base_submit_input" value="Add to friends" onclick="add_friend({{ user.id }})">
+            <input type="submit" class="base_input base_submit_input" value="Remove from friends" onclick="remove_friend({{ user.id }})">
+        </div>
     </div>
 {% endblock %}

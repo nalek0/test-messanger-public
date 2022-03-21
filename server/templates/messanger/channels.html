@@ -9,23 +9,31 @@
 {% endblock %}
 
 {% block content %}
+<div class="main_part">
     {% if client_user.friends.count() != 0 %}
-        <form action="{{ url_for('messanger.create_channel') }}" method="post">
-            <label for="companion-list">Choose companion:</label>
-            <select name="companion-list" id="companion-list">
+        <div class="create_channel_form">
+            <form action="{{ url_for('messanger.create_channel') }}" method="post"
+                  class="base_form centered_form">
+                <div style="font-size: 1.75rem;">Choose companions:</div>
                 {% for friend in client_user.friends %}
-                    <option value="{{ friend.id }}">{{ friend.full_name() }}</option>
+                    <div class="friend_block">
+                        <input type="checkbox" name="companions"
+                               id="companion-{{ friend.id }}" value="{{ friend.id }}"
+                               class="base_checkbox_input">
+                        <label for="companion-{{ friend.id }}">{{ friend.full_name() }}</label>
+                    </div>
                 {% endfor %}
-            </select> <br>
-            <input type="submit" value="Create a new channel">
-        </form>
+                <input type="submit" value="Create a new channel" class="base_input base_submit_input">
+            </form>
+        </div>
     {% else %}
         <h2>You have no friends, try to find a few to make a new channel</h2>
     {% endif %}
+
     {% if client_user.channels|length %}
         <h2>Results</h2>
         {% for channel in client_user.channels %}
-            <a href="{{ url_for('messanger.channel', channel_id=channel.id) }}">
+            <a href="{{ url_for('messanger.channel', channel_id=channel.id) }}" class="block_link">
                 <div class="channel_block">
                     With members:
                     {% for member in channel.members %} {{ member.full_name() }} {% endfor %}
@@ -46,4 +54,5 @@
     {% if page < (number_of_pages - 1) %}
         <a href="{{ url_for('messanger.channels', page=(page + 1)) }}" class="link">Next page</a>
     {% endif %}
+</div>
 {% endblock %}
