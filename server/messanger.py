@@ -1,6 +1,7 @@
 from flask import Blueprint, \
     render_template, redirect, url_for, request, abort
 from flask_login import login_required, current_user
+from werkzeug import exceptions
 
 from database import Channel, User, db
 
@@ -22,7 +23,7 @@ def channels(page: int = 0):
 def create_channel():
     companions = request.form.get("companions")
     if companions is None:
-        return abort(400)
+        return abort(exceptions.BadRequest.code)
 
     other_users = list(map(
         lambda companion: User.query.get_or_404(companion),
@@ -47,6 +48,20 @@ def create_channel():
 @messanger.route("/channel/<int:channel_id>")
 @login_required
 def channel(channel_id: int):
-    current_channel = Channel.query.get_or_404(channel_id)
-    return render_template("channel.html",
-                           channel=current_channel)
+    current_channel: Channel = Channel.query.get_or_404(channel_id)
+    if current_channel.has_permissions_to_read(current_user):
+        return render_template("channel.html",
+                               channel=current_channel)
+    else:
+        abort(exceptions.Forbidden.code)
+
+
+@messanger.route("/channel/<int:channel_id>/members")
+@login_required
+def channel_members(channel_id: int):
+    current_channel: Channel = Channel.query.get_or_404(channel_id)
+    if current_channel.has_permissions_to_read(current_user):
+        return render_template("channel_members.html",
+                               channel=current_channel)
+    else:
+        abort(exceptions.Forbidden.code)

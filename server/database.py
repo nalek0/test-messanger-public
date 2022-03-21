@@ -30,13 +30,22 @@ class User(UserMixin, db.Model):
     channels = db.relationship("Channel",
                                secondary=channel_membership_association_table,
                                backref="members")
-    messages = db.relationship("Message", backref='author', lazy=True)
+    messages = db.relationship("Message", backref='author', lazy='dynamic')
 
     friends = db.relationship('User',
                               secondary=user_friendship_association_table,
                               primaryjoin=(user_friendship_association_table.c.user_id == id),
                               secondaryjoin=(user_friendship_association_table.c.friend_id == id),
                               lazy='dynamic')
+
+    def json(self):
+        return {
+            "id": self.id,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "username": self.username,
+            "description": self.description
+        }
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -51,6 +60,14 @@ class Channel(db.Model):
     # members: List[User]
     messages = db.relationship("Message", backref='channel', lazy=True)
 
+    def has_permissions_to_read(self, user: User) -> bool:
+        return user in self.members
+
+    def json(self):
+        return {
+            "id": self.id
+        }
+
     def __repr__(self):
         return f"<Channel {self.id}>"
 
@@ -62,6 +79,15 @@ class Message(db.Model):
     datetime = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def json(self):
+        return {
+            "id": self.id,
+            "text": self.text,
+            "datetime": str(self.datetime),
+            "channel": self.channel.json(),
+            "author": self.author.json(),
+        }
 
     def __repr__(self):
         return f"<Message {self.id}>"

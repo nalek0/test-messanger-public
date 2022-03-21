@@ -1,27 +1,47 @@
 {% extends 'base.html' %}
 
+<!-- Parameters:
+channel: Channel
+-->
+
 {% block title %}
     Channel
 {% endblock %}
 
-{% block content %}
-    <h2>Members:</h2>
-    <ul>
-        {% for member in channel.members %}
-            <li>
-                <a href="{{ url_for('main.profile', username=member.username) }}" class="link">{{ member.full_name() }}</a>
-            </li>
-        {% endfor %}
-    </ul>
-    <h2>Messages:</h2>
-    <ul>
-        {% for message in channel.messages %}
-            <li>
-                <div>
-                    <a href="{{ url_for('main.profile', username=member.username) }}" class="link">{{ message.author.full_name() }}</a> {{ message.datetime }}
-                </div>
-                <div>{{ message.text }}</div>
-            </li>
-        {% endfor %}
-    </ul>
+{% block top_stylesheets %}
+    <link rel="stylesheet" href="{{ url_for('messanger.static', filename='channel.css') }}">
 {% endblock %}
+
+{% block top_scripts %}
+    <script>
+        const CHANNEL_ID = {{ channel.id }};
+    </script>
+    <script type="text/javascript" src="{{ url_for('messanger.static', filename='channel.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="channel_window">
+        <div class="messages_window" id="messages_window"></div>
+        <div class="input_window">
+            <textarea id="message_textarea" maxlength="2000"
+                      class="base_input base_textarea accent-scrollbar" required></textarea>
+            <input type="submit" class="base_input base_submit_input" value="Send message" onclick="send_message()">
+        </div>
+    </div>
+{% endblock %}
+
+<!--
+<div class="message">
+    <div class="author">Author</div>
+    <div class="paragraph message_text">
+        Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text
+        Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text
+        Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text
+        Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text
+    </div>
+</div>
+<div class="message">
+    <div class="author">Author</div>
+    <div class="paragraph message_text">Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text</div>
+</div>
+-->
