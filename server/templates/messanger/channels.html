@@ -20,7 +20,7 @@
             <input type="submit" value="Create a new channel">
         </form>
     {% else %}
-        <h2>You have no friends, try to find few to make a new channel</h2>
+        <h2>You have no friends, try to find a few to make a new channel</h2>
     {% endif %}
     {% if client_user.channels|length %}
         <h2>Results</h2>
@@ -34,9 +34,9 @@
         {% endfor %}
     {% else %}
         {% if page == 0 %}
-            <h4>You have no channels, maybe make some?</h4>
+            <h4>You have no channels, maybe make a few?</h4>
         {% else %}
-            <h4>No channels found on this page</h4>
+            <h4>No channels are found on this page</h4>
         {% endif %}
     {% endif %}
 
