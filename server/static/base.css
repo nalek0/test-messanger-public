@@ -22,13 +22,7 @@ body {
 
 header {
     background: var(--header-color);
-
     padding: 0.3rem;
-
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
 }
 
 .top_part {
@@ -72,7 +66,9 @@ content {
     max-width: 100%;
     margin-left: auto;
     margin-right: auto;
+}
 
+.header_part {
     display: flex;
     flex-direction: row;
     align-items: flex-start;

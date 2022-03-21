@@ -1,0 +1,18 @@
+.paragraph:before {
+    content: " ";
+    display: inline;
+    width: 3rem;
+}
+
+.paragraph.centered {
+    text-align: center;
+}
+
+.paragraph.right {
+    text-align: right;
+}
+
+.paragraph.left {
+    text-align: left;
+}
+
