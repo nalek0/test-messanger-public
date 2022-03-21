@@ -10,12 +10,15 @@
 
 {% block content %}
     <div class="auth-form">
-        <form method="post">
-            <input type="text" name="username" placeholder="Username" /> <br>
-            <input type="password" name="password" placeholder="Password"/> <br>
-            <input type="submit" value="Submit"> <br>
+        <form method="post" class="base_form centered_form">
+            <input type="text" name="username" placeholder="Username" class="base_input base_text_input" /> 
+            <input type="password" name="password" placeholder="Password" class="base_input base_text_input" /> 
+            <input type="submit" value="Submit" class="base_input base_submit_input" /> 
+
+            <div>
+                <a href="{{ url_for('auth.signup_get') }}" class="link">Make a new account</a>
+            </div>
         </form>
-        <a href="{{ url_for('auth.signup_get') }}" class="link">Make a new account</a>
     </div>
 
     {% if error == None %}

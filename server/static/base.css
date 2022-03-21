@@ -1,6 +1,7 @@
 :root {
     --background-color: white;
     --header-color: #aaf;
+    --accent-color: #aaf;
 
     --text-color: black;
 
@@ -54,14 +55,26 @@ a.link {
 }
 a.link:hover {
     color: var(--link-hover-color);
-    text-decoration: underlined;
+    text-decoration: underline;
 }
 a.link:active {
     color: var(--link-click-color);
-    text-decoration: underlined;
+    text-decoration: underline;
 }
 
 content {
     display: block;
     margin: 1rem;
+}
+
+.main_part {
+    width: 900px;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
 }

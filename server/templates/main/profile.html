@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 
+<!-- Parameters:
+* client_user
+* user
+-->
+
 {% block top_scripts %}
     <script type="text/javascript" src="{{ url_for('main.static', filename='profile.js') }}"></script>
 {% endblock %}
@@ -9,12 +14,7 @@
 {% endblock %}
 
 {% block content %}
-    <ul>
-        <li>First name: {{ user.first_name }}</li>
-        <li>Last name: {{ user.last_name }}</li>
-    </ul>
-    {% if client_user is defined and client_user != user %}
-        <button onclick="add_friend({{ user.id }})">Add to friend list</button>
-        <button onclick="remove_friend({{ user.id }})">Remove from friend list</button>
-    {% endif %}
+<div class="main_part">
+    <div class="full_name">{{ user.full_name }}</div>
+</div>
 {% endblock %}

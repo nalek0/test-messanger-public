@@ -3,20 +3,23 @@
 <head>
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='forms.css') }}">
     {% block top_stylesheets %}{% endblock %}
     {% block top_scripts %}{% endblock %}
 </head>
 <body>
     <header>
-        <div class="top_part">
-            <span class="top_link big"><a href="{{ url_for('main.index') }}" class="link">Index</a></span>
-            <span class="top_link big"><a href="{{ url_for('main.client_profile') }}" class="link">Profile</a></span>
-            <span class="top_link big"><a href="{{ url_for('main.search_page') }}" class="link">Search</a></span>
-            <span class="top_link big"><a href="{{ url_for('messanger.channels') }}" class="link">Channels</a></span>
-        </div>
-        <div class="top_part">
-            <span class="top_link small"><a href="{{ url_for('auth.signup_get') }}" class="link">Sign up</a></span>
-            <span class="top_link small"><a href="{{ url_for('auth.logout') }}" class="link">Log out</a></span>
+        <div class="main_part">
+            <div class="top_part">
+                <span class="top_link big"><a href="{{ url_for('main.index') }}" class="link">Index</a></span>
+                <span class="top_link big"><a href="{{ url_for('main.client_profile') }}" class="link">Profile</a></span>
+                <span class="top_link big"><a href="{{ url_for('main.search_page') }}" class="link">Search</a></span>
+                <span class="top_link big"><a href="{{ url_for('messanger.channels') }}" class="link">Channels</a></span>
+            </div>
+            <div class="top_part">
+                <span class="top_link small"><a href="{{ url_for('auth.signup_get') }}" class="link">Sign up</a></span>
+                <span class="top_link small"><a href="{{ url_for('auth.logout') }}" class="link">Log out</a></span>
+            </div>
         </div>
     </header>
     <content>{% block content %}{% endblock %}</content>
