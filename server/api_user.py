@@ -12,11 +12,13 @@ user_api = Blueprint("user_api", __name__,
 def update_profile():
     first_name = request.json.get("first_name")
     last_name = request.json.get("last_name")
+    description = request.json.get("description") or ""
     if first_name is None or last_name is None:
         return abort(400)
 
     current_user.first_name = first_name
     current_user.last_name = last_name
+    current_user.description = description
     db.session.commit()
 
     return {

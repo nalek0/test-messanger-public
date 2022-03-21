@@ -4,6 +4,18 @@
     <script type="text/javascript" src="{{ url_for('main.static', filename='personal-profile.js') }}"></script>
 {% endblock %}
 
+{% block top_stylesheets %}
+    <style>
+        .profile {
+            text-align: center;
+        }
+
+        .profile > .label {
+            text-align: left;
+        }
+    </style>
+{% endblock %}
+
 {% block title %}
     Profile {{ user.nickname }}
 {% endblock %}
@@ -11,18 +23,24 @@
 {% block content %}
     <div class="main_part">
         <div class="profile">
-            <label for="profile_first_name">First name:</label>
+            <div class="label">First name:</div>
             <input type="text"
-                   id="profile_first_name"
                    name="first_name"
                    class="base_input base_text_input"
-                   value="{{ user.first_name }}" required>
-            <label for="profile_last_name">Last name:</label>
+                   value="{{ user.first_name }}"
+                   maxlength="80" required>
+            <div class="label">Last name:</div>
             <input type="text"
-                   id="profile_last_name"
                    name="last_name"
                    class="base_input base_text_input"
-                   value="{{ user.last_name }}" required>
+                   value="{{ user.last_name }}"
+                   maxlength="80" required>
+            <div class="label">Description:</div>
+            <input type="text"
+                   name="description"
+                   class="base_input base_text_input"
+                   value="{{ user.description }}"
+                   maxlength="400">
             <input type="submit" value="Send changes" class="base_input base_submit_input" onclick="update_profile(this)">
         </div>
     </div>

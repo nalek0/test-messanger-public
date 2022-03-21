@@ -15,8 +15,9 @@
 
 {% block content %}
     <div class="main_part">
-        <h1>{{ user.username }} profile</h1>
-        <div>First name: {{ user.first_name }}</div>
-        <div>Last name: {{ user.last_name }}</div>
+        <h1>Profile:</h1>
+        <div class="paragraph">First name: {{ user.first_name }}</div>
+        <div class="paragraph">Last name: {{ user.last_name }}</div>
+        <div class="paragraph">Description: {{ user.description }}</div>
     </div>
 {% endblock %}

@@ -20,10 +20,13 @@ user_friendship_association_table = db.Table(
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
+
     first_name = db.Column(db.String(80), nullable=False)
     last_name = db.Column(db.String(80), nullable=False)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(64), nullable=False)
+    description = db.Column(db.String(400), default="")
+
     channels = db.relationship("Channel",
                                secondary=channel_membership_association_table,
                                backref="members")
