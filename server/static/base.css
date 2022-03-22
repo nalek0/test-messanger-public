@@ -16,6 +16,7 @@
 
     --main_part-width: 900px;
     --header-height: 50px;
+    --channel-windows-delta: 10px;
 }
 
 body {
@@ -30,6 +31,7 @@ header {
     background: var(--header-color);
     height:  var(--header-height);
     padding: 0.3rem;
+    box-sizing: border-box;
 }
 
 .top_part {
@@ -93,4 +95,19 @@ content {
     flex-direction: row;
     align-items: flex-start;
     justify-content: space-between;
+}
+
+.accent-scrollbar::-webkit-scrollbar,
+.accent-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.accent-scrollbar::-webkit-scrollbar {
+    width: 5px;
+}
+.accent-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--darken-accent-color);
+
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
 }

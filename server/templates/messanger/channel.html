@@ -22,13 +22,12 @@ channel: Channel
 {% endblock %}
 
 {% block content %}
-    <div class="channel_window">
-        <div class="messages_window" id="messages_window"></div>
-        <div class="input_window">
-            <textarea id="message_textarea" maxlength="2000"
-                      class="base_input base_textarea accent-scrollbar" required></textarea>
-            <input type="submit" class="base_input base_submit_input" value="Send message" onclick="sendMessage()">
-        </div>
+    <div class="messages_window main_window accent-scrollbar" id="messages_window">
+    </div>
+    <div class="input_window main_window">
+        <textarea id="message_textarea" maxlength="2000"
+                  class="base_input base_textarea accent-scrollbar" required></textarea>
+        <input type="submit" class="base_input base_submit_input" value="Send message" onclick="sendMessage()">
     </div>
 
     <div class="nav_part">

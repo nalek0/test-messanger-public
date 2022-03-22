@@ -35,21 +35,6 @@ textarea.base_textarea {
     resize: none;
 }
 
-.accent-scrollbar::-webkit-scrollbar,
-.accent-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-}
-.accent-scrollbar::-webkit-scrollbar {
-    width: 5px;
-}
-.accent-scrollbar::-webkit-scrollbar-thumb {
-    background: var(--darken-accent-color);
-
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-}
-
 input.base_text_input {
     display: block;
     box-sizing: border-box;
