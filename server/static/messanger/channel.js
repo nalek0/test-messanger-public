@@ -27,7 +27,7 @@ async function sendMessage() {
 	let text = textarea.value;
 	textarea.value = "";
 
-	showMessagesAppend([await messageList.sendMessage(text)]);
+	await messageList.sendMessage(text);
 }
 
 function showMessagesPrepend(messages) {

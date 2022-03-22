@@ -62,6 +62,9 @@ class Channel(db.Model, Serializable):
     # members: List[User]
     messages = db.relationship("Message", backref='channel', lazy=True)
 
+    def room_id(self):
+        return f"channel_room_{self.id}"
+
     def has_permissions_to_read(self, user: User) -> bool:
         return user in self.members
 

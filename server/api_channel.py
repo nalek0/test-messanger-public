@@ -6,6 +6,7 @@ from werkzeug import exceptions
 
 from database import User, db, Channel, Message
 from server.serializable import Serializable, serialize_list
+from server_sockets import socketio
 
 channel_api = Blueprint("channel_api", __name__,
                         url_prefix="/channel")
@@ -58,6 +59,8 @@ def send_message():
     current_channel.messages.append(new_message)
     db.session.add(new_message)
     db.session.commit()
+
+    socketio.emit("channel_message", new_message.json(), room=new_message.channel.room_id())
 
     return {
         "data": new_message.json()

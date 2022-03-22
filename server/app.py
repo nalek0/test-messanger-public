@@ -1,13 +1,14 @@
 from configparser import ConfigParser
+
 from flask import Flask
 
+from api import api as api_blueprint
+from auth import auth as auth_blueprint
 from database import db
 from login_manager import login_manager
-
-from auth import auth as auth_blueprint
 from main import main as main_blueprint
 from messanger import messanger as messanger_blueprint
-from api import api as api_blueprint
+from server_sockets import socketio
 
 CONFIG = ConfigParser()
 CONFIG.read("flask.config")
@@ -19,6 +20,7 @@ def create_app():
         app.config[key.upper()] = CONFIG["Flask"][key]
 
     db.init_app(app)
+    socketio.init_app(app)
     login_manager.init_app(app)
 
     app.register_blueprint(auth_blueprint)
@@ -30,6 +32,7 @@ def create_app():
 
 
 if __name__ == "__main__":
-    create_app().run(host=CONFIG["RunConfig"]["host"],
-                     port=CONFIG["RunConfig"].getint("port"),
-                     debug=CONFIG["RunConfig"].getboolean("debug"))
+    socketio.run(create_app(),
+                 host=CONFIG["RunConfig"]["host"],
+                 port=CONFIG["RunConfig"].getint("port"),
+                 debug=CONFIG["RunConfig"].getboolean("debug"))

@@ -17,6 +17,7 @@ channel: Channel
         const CHANNEL_ID = {{ channel.id }};
     </script>
     <script type="text/javascript" src="{{ url_for('messanger.static', filename='channel.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('messanger.static', filename='channel_sockets.js') }}"></script>
 {% endblock %}
 
 {% block content %}
