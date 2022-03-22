@@ -28,8 +28,8 @@ class MessageList(Serializable):
 @login_required
 def load_messages():
     channel_id = request.json.get("channel_id")
-    current_channel: Channel = Channel.query.get_or_404(channel_id)
-    if not current_channel.has_permissions_to_read(current_user):
+    current_channel: Channel = Channel.query.get(channel_id)
+    if current_channel is None or not current_channel.has_permissions_to_read(current_user):
         return abort(exceptions.Forbidden.code)
 
     return {
@@ -41,8 +41,8 @@ def load_messages():
 @login_required
 def send_message():
     channel_id = request.json.get("channel_id")
-    current_channel: Channel = Channel.query.get_or_404(channel_id)
-    if not current_channel.has_permissions_to_read(current_user):
+    current_channel: Channel = Channel.query.get(channel_id)
+    if current_channel is None or not current_channel.has_permissions_to_read(current_user):
         return abort(exceptions.Forbidden.code)
 
     author: User = current_user

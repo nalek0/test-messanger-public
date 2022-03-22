@@ -20,8 +20,11 @@ def get_user():
     if user_id is None:
         abort(exceptions.BadRequest.code)
 
-    user = User.query.get_or_404(user_id)
-    return user.public_json()
+    user = User.query.get(user_id)
+    if user is not None:
+        return user.public_json()
+    else:
+        return {}
 
 
 @user_api.route("/update_profile", methods=["POST"])
@@ -55,9 +58,9 @@ def update_profile():
 @login_required
 def add_friend():
     user_id = request.json.get("user_id")
-    if user_id is None:
+    user = User.query.get(user_id)
+    if user is None:
         abort(exceptions.BadRequest.code)
-    user = User.query.get_or_404(user_id)
 
     if user not in current_user.friends:
         current_user.friends.append(user)
@@ -73,9 +76,9 @@ def add_friend():
 @login_required
 def remove_friend():
     user_id = request.json.get("user_id")
-    if user_id is None:
+    user = User.query.get(user_id)
+    if user is None:
         abort(exceptions.BadRequest.code)
-    user = User.query.get_or_404(user_id)
 
     if user in current_user.friends:
         current_user.friends.remove(user)

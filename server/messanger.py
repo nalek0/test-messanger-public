@@ -26,9 +26,11 @@ def create_channel():
         return abort(exceptions.BadRequest.code)
 
     other_users = list(map(
-        lambda companion: User.query.get_or_404(companion),
+        lambda companion: User.query.get(companion),
         companions
     ))
+    if any(map(lambda el: el is None, other_users)):
+        abort(exceptions.BadRequest.code)
 
     new_channel = Channel()
     current_user.channels.append(new_channel)
@@ -48,8 +50,8 @@ def create_channel():
 @messanger.route("/channel/<int:channel_id>")
 @login_required
 def channel(channel_id: int):
-    current_channel: Channel = Channel.query.get_or_404(channel_id)
-    if current_channel.has_permissions_to_read(current_user):
+    current_channel: Channel = Channel.query.get(channel_id)
+    if current_channel is not None and current_channel.has_permissions_to_read(current_user):
         return render_template("channel.html",
                                channel=current_channel)
     else:
@@ -59,8 +61,8 @@ def channel(channel_id: int):
 @messanger.route("/channel/<int:channel_id>/members")
 @login_required
 def channel_members(channel_id: int):
-    current_channel: Channel = Channel.query.get_or_404(channel_id)
-    if current_channel.has_permissions_to_read(current_user):
+    current_channel: Channel = Channel.query.get(channel_id)
+    if current_channel is not None and current_channel.has_permissions_to_read(current_user):
         return render_template("channel_members.html",
                                channel=current_channel)
     else:
