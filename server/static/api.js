@@ -57,6 +57,14 @@ class Client extends User {
 				return new Client(JSON.parse(response));
 		});
 	}
+
+	static updateClientData(data) {
+		return makeRequest(
+			"POST",
+			"/api/user/update_profile",
+			data
+		);
+	}
 }
 
 class Channel {

@@ -21,7 +21,7 @@
 .push_message.error {
 	background: #f44;
 }
-.push_message.green {
+.push_message.ok_message {
 	background: #4f4;
 }
 

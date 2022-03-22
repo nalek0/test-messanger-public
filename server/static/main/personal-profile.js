@@ -1,21 +1,15 @@
-function update_profile(button) {
-	let xhr = new XMLHttpRequest();
-	xhr.open('POST', '/api/user/update_profile', true);
-	xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-
-	xhr.onload = function () {
-		if (this.status === 200) {
-			let response = JSON.parse(this.response);
-			alert(response["description"]);
-		}
-		else
-			alert("Error with error code: " + this.status);
-	};
-
-	let data = {};
+async function update_profile(button) {
+	let data = {}
 	Array.from(button.parentNode.childNodes)
-			.filter( node => node.tagName && node.tagName.toLowerCase() === "input" && node.getAttribute("type") === "text" )
+			.filter( node => node.tagName && ((node.tagName.toLowerCase() === "input" && node.getAttribute("type") === "text") || node.tagName.toLowerCase() === "textarea")  )
 			.forEach( node => data[node.getAttribute("name")] = node.value )
-
-	xhr.send(JSON.stringify(data));
+	try {
+		await Client.updateClientData(data);
+		pushMessagesList.addMessage(new PushMessage("Saved", "ok_message"));
+	} catch (error) {
+		if (error.status === 400 || error.status === 404)
+			pushMessagesList.addMessage(new PushMessage("Something is wrong with your parameters", "error"));
+		else 
+			pushMessagesList.addMessage(new PushMessage("Error, try again later", "error"));
+	}
 }

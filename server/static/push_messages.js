@@ -33,8 +33,6 @@ class PushMessagesList {
 	}
 }
 
-//    <div class="push_messages_window" id="push_messages_window"></div>
-
 const pushMessagesList = new PushMessagesList();
 
 window.onload = () => {

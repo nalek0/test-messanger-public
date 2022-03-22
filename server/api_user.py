@@ -31,7 +31,14 @@ def update_profile():
     last_name = request.json.get("last_name")
     description = request.json.get("description") or ""
     if first_name is None or last_name is None:
-        return abort(400)
+        return abort(exceptions.BadRequest.code)
+
+    first_name.strip()
+    last_name.strip()
+    description.strip()
+
+    if first_name == "" or last_name == "":
+        return abort(exceptions.BadRequest.code)
 
     current_user.first_name = first_name
     current_user.last_name = last_name
