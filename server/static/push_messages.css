@@ -1,0 +1,30 @@
+.push_messages_window {
+	z-index: 1;
+
+	position: fixed;
+	bottom: var(--channel-windows-delta);
+	right: var(--channel-windows-delta);
+
+	width: 250px;
+}
+
+.push_message {
+	padding: 0.5rem;
+	border-radius: 0.5rem;
+	opacity: 1;
+	transition: opacity ease-out 1s;
+}
+.push_message.faded {
+	opacity: 0;
+}
+
+.push_message.error {
+	background: #f44;
+}
+.push_message.green {
+	background: #4f4;
+}
+
+.push_message:not(:last-child) {
+	margin-bottom: 1rem;
+}

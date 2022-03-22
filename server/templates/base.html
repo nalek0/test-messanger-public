@@ -5,11 +5,18 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='forms.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='text.css') }}">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
     <script type="text/javascript" charset="utf-8">
         const socketio = io();
     </script>
+
     <script type="text/javascript" src="{{ url_for('static', filename='api.js') }}"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='push_messages.css') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='push_messages.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='push_messages_support.js') }}"></script>
+
     {% block top_stylesheets %}{% endblock %}
     {% block top_scripts %}{% endblock %}
 </head>
@@ -29,5 +36,6 @@
         </div>
     </header>
     <content>{% block content %}{% endblock %}</content>
+    <div class="push_messages_window" id="push_messages_window"></div>
 </body>
 </html>

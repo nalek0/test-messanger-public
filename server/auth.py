@@ -19,7 +19,7 @@ def load_user(user_id: int):
 
 @auth.route("/signup", methods=["GET"])
 def signup_get():
-    return render_template("signup.html", error=request.args.get('error'))
+    return render_template("signup.html")
 
 
 @auth.route("/signup", methods=["POST"])
@@ -30,9 +30,9 @@ def signup_post():
     password = request.form.get('password')
 
     if User.query.filter_by(username=username).first() is not None:
-        return redirect(url_for("auth.signup_get", error="Username is already taken"))
+        return redirect(url_for("auth.signup_get", errors=["Username is already taken"]))
     if not username.isalpha():
-        return redirect(url_for("auth.signup_get", error="Username must contain only letters"))
+        return redirect(url_for("auth.signup_get", errors=["Username must contain only letters"]))
 
     new_user = User(
         first_name=first_name,
@@ -52,7 +52,7 @@ def signup_post():
 
 @auth.route("/login", methods=["GET"])
 def login_get():
-    return render_template("login.html", error=request.args.get('error'))
+    return render_template("login.html")
 
 
 @auth.route("/login", methods=["POST"])
@@ -62,9 +62,9 @@ def login_post():
 
     user = User.query.filter_by(username=username).first()
     if user is None:
-        return redirect(url_for("auth.login_get", error="No user with given username is found"))
+        return redirect(url_for("auth.login_get", errors=["No user with given username is found"]))
     if user.password_hash != hashlib.sha256(password.encode('utf-8')).hexdigest():
-        return redirect(url_for("auth.login_get", error="Wrong password"))
+        return redirect(url_for("auth.login_get", errors=["Wrong password"]))
 
     login_user(user, remember=True)
 
