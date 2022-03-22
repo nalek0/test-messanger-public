@@ -1,37 +1,59 @@
-function add_friend(user_id) {
-	let xhr = new XMLHttpRequest();
-	xhr.open('POST', '/api/user/add_friend', true);
-	xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+var clientUser, currentUser;
+var friendsNode;
 
-	xhr.onload = function () {
-		if (this.status === 200) {
-			let response = JSON.parse(this.response);
-			alert(response["description"]);
-		}
-		else
-			alert("Error with error code: " + this.status);
-	};
-
-	xhr.send(JSON.stringify({
-		"user_id": user_id
-	}));
+function updateButton() {
+	if (clientUser.isFriend(currentUser))
+		setRemoveFromFriendsButton();
+	else
+		setAddToFriendButton();
 }
 
-function remove_friend(user_id) {
-	let xhr = new XMLHttpRequest();
-	xhr.open('POST', '/api/user/remove_friend', true);
-	xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+socketio.on("user_private_data_changed", newClientData => {
+	clientUser = new Client(newClientData);
+	updateButton();
+});
 
-	xhr.onload = function () {
-		if (this.status === 200) {
-			let response = JSON.parse(this.response);
-			alert(response["description"]);
-		}
-		else
-			alert("Error with error code: " + this.status);
+function clearFriendNode () {
+	while (friendsNode.firstChild)
+		friendsNode.removeChild(friendsNode.firstChild);
+}
+
+function setAddToFriendButton() {
+	clearFriendNode();
+
+	let button = document.createElement("input");
+	button.type = "submit";
+	button.value = "Add to friends";
+	button.classList.add("base_input");
+	button.classList.add("base_submit_input");
+	button.onclick = async () => {
+		await clientUser.addFriend(currentUser);
+		updateButton();
 	};
 
-	xhr.send(JSON.stringify({
-		"user_id": user_id
-	}));
+	friendsNode.appendChild(button);
 }
+
+function setRemoveFromFriendsButton() {
+	clearFriendNode();
+
+	let button = document.createElement("input");
+	button.type = "submit";
+	button.value = "Remove from friends";
+	button.classList.add("base_input");
+	button.classList.add("base_submit_input");
+	button.onclick = async () => {
+		await clientUser.removeFriend(currentUser);
+		updateButton();
+	};
+
+	friendsNode.appendChild(button);
+}
+
+window.onload = async () => {
+	clientUser = await Client.getClient();
+	currentUser = await User.getUser(USER_ID);
+	friendsNode = document.getElementById("friend-relationship");
+
+	updateButton();
+};

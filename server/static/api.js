@@ -6,6 +6,57 @@ class User {
         this.username = data.username;
         this.description = data.description;
 	}
+
+	static getUser(user_id) {
+		return makeRequest(
+			"POST",
+			"/api/user/get_user",
+			{ "user_id": user_id }
+		).then(response => new User(JSON.parse(response)));
+	}
+}
+
+class Client extends User {
+	static _instance = null;
+	static _loading = false;
+
+
+	constructor(data) {
+		super(data);
+		this.friends = data.friends.map(friendData => new User(friendData));
+	}
+
+	isFriend(user) {
+		return this.friends.some(it => it.id === user.id);
+	}
+
+	addFriend(user) {
+		return makeRequest(
+			"POST",
+			"/api/user/add_friend",
+			{ "user_id": user.id }
+		);
+	}
+
+	removeFriend(user) {
+		return makeRequest(
+			"POST",
+			"/api/user/remove_friend",
+			{ "user_id": user.id }
+		);
+	}
+
+	static getClient() {
+		return makeRequest(
+			"POST",
+			"/api/user/get_client_user"
+		).then(response => {
+			if (response === null)
+				return null;
+			else
+				return new Client(JSON.parse(response));
+		});
+	}
 }
 
 class Channel {

@@ -7,6 +7,7 @@
 
 {% block top_scripts %}
     <script type="text/javascript" src="{{ url_for('main.static', filename='profile.js') }}"></script>
+    <script type="text/javascript">const USER_ID = {{ user.id }};</script>
 {% endblock %}
 
 {% block title %}
@@ -24,7 +25,7 @@
         <div class="paragraph">Description: {{ user.description }}</div>
 
         {% if client_user is defined and user.id != client_user.id %}
-            <div class="paragraph centered">
+            <div class="paragraph centered" id="friend-relationship">
                 <input type="submit" class="base_input base_submit_input" value="Add to friends" onclick="add_friend({{ user.id }})">
                 <input type="submit" class="base_input base_submit_input" value="Remove from friends" onclick="remove_friend({{ user.id }})">
             </div>

@@ -17,10 +17,10 @@ class MessageList(Serializable):
         self.messages = messages
         self.channel = channel
 
-    def json(self) -> dict:
+    def public_json(self) -> dict:
         return {
             "messages": serialize_list(self.messages),
-            "channel": self.channel.json(),
+            "channel": self.channel.public_json(),
         }
 
 
@@ -33,7 +33,7 @@ def load_messages():
         return abort(exceptions.Forbidden.code)
 
     return {
-        "data": MessageList(current_channel.messages, current_channel).json()
+        "data": MessageList(current_channel.messages, current_channel).public_json()
     }
 
 
@@ -60,8 +60,8 @@ def send_message():
     db.session.add(new_message)
     db.session.commit()
 
-    socketio.emit("channel_message", new_message.json(), room=new_message.channel.room_id())
+    socketio.emit("channel_message", new_message.public_json(), room=new_message.channel.room_id())
 
     return {
-        "data": new_message.json()
+        "data": new_message.public_json()
     }
