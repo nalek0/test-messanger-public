@@ -2,6 +2,8 @@ import datetime as datetime
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 
+from server.serializable import Serializable
+
 db = SQLAlchemy()
 
 channel_membership_association_table = db.Table(
@@ -17,7 +19,7 @@ user_friendship_association_table = db.Table(
 )
 
 
-class User(UserMixin, db.Model):
+class User(UserMixin, db.Model, Serializable):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
 
@@ -38,7 +40,7 @@ class User(UserMixin, db.Model):
                               secondaryjoin=(user_friendship_association_table.c.friend_id == id),
                               lazy='dynamic')
 
-    def json(self):
+    def json(self) -> dict:
         return {
             "id": self.id,
             "first_name": self.first_name,
@@ -54,7 +56,7 @@ class User(UserMixin, db.Model):
         return f"{self.first_name} {self.last_name}"
 
 
-class Channel(db.Model):
+class Channel(db.Model, Serializable):
     __tablename__ = 'channel'
     id = db.Column(db.Integer, primary_key=True)
     # members: List[User]
@@ -63,7 +65,7 @@ class Channel(db.Model):
     def has_permissions_to_read(self, user: User) -> bool:
         return user in self.members
 
-    def json(self):
+    def json(self) -> dict:
         return {
             "id": self.id
         }
@@ -72,7 +74,7 @@ class Channel(db.Model):
         return f"<Channel {self.id}>"
 
 
-class Message(db.Model):
+class Message(db.Model, Serializable):
     __tablename__ = 'message'
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(1000), nullable=False)
@@ -80,7 +82,7 @@ class Message(db.Model):
     channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-    def json(self):
+    def json(self) -> dict:
         return {
             "id": self.id,
             "text": self.text,

@@ -1,11 +1,26 @@
+from typing import List
+
 from flask import Blueprint, request, abort
 from flask_login import login_required, current_user
 from werkzeug import exceptions
 
 from database import User, db, Channel, Message
+from server.serializable import Serializable, serialize_list
 
 channel_api = Blueprint("channel_api", __name__,
                         url_prefix="/channel")
+
+
+class MessageList(Serializable):
+    def __init__(self, messages: List[Message], channel: Channel) -> None:
+        self.messages = messages
+        self.channel = channel
+
+    def json(self) -> dict:
+        return {
+            "messages": serialize_list(self.messages),
+            "channel": self.channel.json(),
+        }
 
 
 @channel_api.route("/load_messages", methods=["POST"])
@@ -17,10 +32,7 @@ def load_messages():
         return abort(exceptions.Forbidden.code)
 
     return {
-        "data": list(map(
-            lambda channel: channel.json(),
-            current_channel.messages
-        ))
+        "data": MessageList(current_channel.messages, current_channel).json()
     }
 
 
@@ -48,5 +60,5 @@ def send_message():
     db.session.commit()
 
     return {
-        "description": "OK"
+        "data": new_message.json()
     }
