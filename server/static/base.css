@@ -15,6 +15,7 @@
     --font-size: 15px;
 
     --main_part-width: 900px;
+    --header-height: 50px;
 }
 
 body {
@@ -27,6 +28,7 @@ body {
 
 header {
     background: var(--header-color);
+    height:  var(--header-height);
     padding: 0.3rem;
 }
 

@@ -1,4 +1,6 @@
 import datetime as datetime
+
+from flask import url_for
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 
@@ -40,6 +42,9 @@ class User(UserMixin, db.Model, Serializable):
                               secondaryjoin=(user_friendship_association_table.c.friend_id == id),
                               lazy='dynamic')
 
+    def profile_url(self):
+        return url_for("main.profile", username=self.username)
+
     def json(self) -> dict:
         return {
             "id": self.id,
@@ -49,11 +54,11 @@ class User(UserMixin, db.Model, Serializable):
             "description": self.description
         }
 
-    def __repr__(self):
-        return '<User %r>' % self.username
-
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
+
+    def __repr__(self):
+        return '<User %r>' % self.username
 
 
 class Channel(db.Model, Serializable):

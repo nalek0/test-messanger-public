@@ -1,0 +1,53 @@
+.nav_part {
+	--channel-windows-delta: 1rem;
+	--nav-block-border-radius: 0.25rem;
+
+	display: inline-block;
+	width: auto;
+	height: auto;
+
+	position: fixed;
+	right: calc(50% + var(--main_part-width) / 2 + var(--channel-windows-delta));
+	top: calc(var(--header-height) + var(--channel-windows-delta));
+
+	border-top-left-radius: var(--nav-block-border-radius);
+	border-bottom-left-radius: var(--nav-block-border-radius);
+	border-right: calc(var(--nav-block-border-radius) / 2) solid var(--lighten-accent-color);
+	overflow: hidden;
+	padding: 0;
+	margin: 0;
+
+	display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+.nav_part:active {
+	border-right: calc(var(--nav-block-border-radius) / 2) solid var(--darken-accent-color);
+}
+
+.nav_part .nav_part_button.first {
+	border-top-left-radius: var(--nav-block-border-radius);
+}
+.nav_part .nav_part_button.last {
+	border-bottom-left-radius: var(--nav-block-border-radius);
+}
+
+.nav_part .nav_part_button {
+	padding: 0.25rem 0.75rem;
+	margin: 0;
+
+	display: inline-block;
+	box-sizing: border-box;
+	width: 100%;
+
+	border-left: var(--nav-block-border-radius) solid var(--accent-color);
+	cursor: pointer;
+
+	font-size: 1.4rem;
+}
+.nav_part .nav_part_button:hover {
+	background: var(--lighten-accent-color);
+}
+.nav_part .nav_part_button:active {
+	background: var(--darken-accent-color);
+}
