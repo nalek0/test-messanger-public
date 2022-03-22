@@ -53,7 +53,9 @@ function setRemoveFromFriendsButton() {
 window.onload = async () => {
 	clientUser = await Client.getClient();
 	currentUser = await User.getUser(USER_ID);
-	friendsNode = document.getElementById("friend-relationship");
 
-	updateButton();
+	if (clientUser && clientUser.id !== currentUser.id) {
+		friendsNode = document.getElementById("friend-relationship");
+		updateButton();
+	}
 };

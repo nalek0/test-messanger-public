@@ -1,5 +1,5 @@
 from flask_login import current_user
-from flask_socketio import SocketIO, join_room, leave_room
+from flask_socketio import SocketIO
 
 socketio = SocketIO()
 

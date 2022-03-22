@@ -3,7 +3,6 @@ from flask_login import login_required, current_user
 from werkzeug import exceptions
 
 from database import User, db
-from server.serializable import serialize_list
 
 user_api = Blueprint("user_api", __name__,
                      url_prefix="/user")
