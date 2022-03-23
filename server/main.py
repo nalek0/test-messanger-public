@@ -39,6 +39,13 @@ def search_page():
     return render_base_template("search_page.html", recommendations=recommendations)
 
 
+@main.route("/channels")
+@main.route("/channels/<int:page>")
+@login_required
+def channels(page: int = 0):
+    return render_base_template("channels.html", page=page, number_of_pages=1)
+
+
 @main.route("/search", methods=["POST"])
 def search_result():
     query = escape(request.form["query"])

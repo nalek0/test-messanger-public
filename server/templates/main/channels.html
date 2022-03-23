@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'main-base.html' %}
 
 {% block top_stylesheets %}
     <link rel="stylesheet" href="{{ url_for('messanger.static', filename='channels.css') }}">
@@ -8,7 +8,7 @@
     Channels: {{ page }} / {{ number_of_pages }}
 {% endblock %}
 
-{% block content %}
+{% block main_content %}
     <div class="main_part">
         {% if client_user.friends.count() != 0 %}
             <div class="create_channel_form">
@@ -54,20 +54,5 @@
         {% if page < (number_of_pages - 1) %}
             <a href="{{ url_for('messanger.channels', page=(page + 1)) }}" class="link">Next page</a>
         {% endif %}
-    </div>
-
-    <div class="nav_part">
-        <a href="{{ url_for('main.client_profile') }}" class="block_link">
-            <div class="nav_part_button first">Profile</div>
-        </a>
-        <a href="{{ url_for('main.friends') }}" class="block_link">
-            <div class="nav_part_button">Friends</div>
-        </a>
-        <a href="{{ url_for('main.search_page') }}" class="block_link">
-            <div class="nav_part_button">Search user</div>
-        </a>
-        <a href="{{ url_for('messanger.channels') }}" class="block_link">
-            <div class="nav_part_button last">Channels</div>
-        </a>
     </div>
 {% endblock %}

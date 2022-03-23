@@ -12,13 +12,6 @@ messanger = Blueprint("messanger", __name__,
                       static_folder="static/messanger")
 
 
-@messanger.route("/channels")
-@messanger.route("/channels/<int:page>")
-@login_required
-def channels(page: int = 0):
-    return render_base_template("channels.html", page=page, number_of_pages=1)
-
-
 @messanger.route("/make_channel", methods=["POST"])
 @login_required
 def create_channel():

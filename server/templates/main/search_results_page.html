@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'main-base.html' %}
 
 {% block title %}
     Search results for {{ query }}
@@ -18,7 +18,7 @@
     </style>
 {% endblock %}
 
-{% block content %}
+{% block main_content %}
     <div class="main_part">
         <h2>Results:</h2>
         {% if results|length %}

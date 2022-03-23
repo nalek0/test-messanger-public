@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'main-base.html' %}
 
 {% block top_scripts %}
     <script type="text/javascript" src="{{ url_for('main.static', filename='personal-profile.js') }}"></script>
@@ -10,7 +10,7 @@
     {{ client_user.full_name() }} friends
 {% endblock %}
 
-{% block content %}
+{% block main_content %}
     <div class="main_part">
         <h1>Friends:</h1>
         {% for friend in client_user.friends %}
@@ -20,20 +20,5 @@
                 </a>
             </div>
         {% endfor %}
-    </div>
-
-    <div class="nav_part">
-        <a href="{{ url_for('main.client_profile') }}" class="block_link">
-            <div class="nav_part_button first">Profile</div>
-        </a>
-        <a href="{{ url_for('main.friends') }}" class="block_link">
-            <div class="nav_part_button">Friends</div>
-        </a>
-        <a href="{{ url_for('main.search_page') }}" class="block_link">
-            <div class="nav_part_button">Search user</div>
-        </a>
-        <a href="{{ url_for('messanger.channels') }}" class="block_link">
-            <div class="nav_part_button last">Channels</div>
-        </a>
     </div>
 {% endblock %}

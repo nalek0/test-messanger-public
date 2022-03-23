@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'main-base.html' %}
 
 {% block title %}
     Search
@@ -18,7 +18,7 @@
     </style>
 {% endblock %}
 
-{% block content %}
+{% block main_content %}
     <div class="main_part">
         <form action="/search" method="post" class="centered_form centered_content">
             <input type="text" name="query" placeholder="Search somebody" class="base_input">
@@ -41,20 +41,5 @@
         {% else %}
             <div class="paragraph">No recommendations</div>
         {% endif %}
-    </div>
-
-    <div class="nav_part">
-        <a href="{{ url_for('main.client_profile') }}" class="block_link">
-            <div class="nav_part_button first">Profile</div>
-        </a>
-        <a href="{{ url_for('main.friends') }}" class="block_link">
-            <div class="nav_part_button">Friends</div>
-        </a>
-        <a href="{{ url_for('main.search_page') }}" class="block_link">
-            <div class="nav_part_button">Search user</div>
-        </a>
-        <a href="{{ url_for('messanger.channels') }}" class="block_link">
-            <div class="nav_part_button last">Channels</div>
-        </a>
     </div>
 {% endblock %}
