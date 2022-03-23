@@ -13,5 +13,7 @@ socketio.on("disconnect", () => {
 });
 
 socketio.on("channel_message", messageJson => {
-    showMessagesAppend([new Message(messageJson)]);
+    let message = new Message(messageJson);
+    if (message.channel.id === messageList.channel.id)
+        showMessagesAppend([new Message(messageJson)]);
 });
