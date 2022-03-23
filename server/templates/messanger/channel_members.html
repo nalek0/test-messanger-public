@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'channel_base.html' %}
 
 {% block top_stylesheets %}
     <link rel="stylesheet" href="{{ url_for('messanger.static', filename='channel_members.css') }}">
@@ -8,7 +8,7 @@
     Channels: {{ page }} / {{ number_of_pages }}
 {% endblock %}
 
-{% block content %}
+{% block channel_content %}
     <div class="main_part">
         {% if channel.members|length %}
             <h2>Members:</h2>
@@ -22,17 +22,5 @@
         {% else %}
             <h4>Strange... This channel have no members...</h4>
         {% endif %}
-    </div>
-
-    <div class="nav_part">
-        <a href="{{ url_for('messanger.channels') }}" class="block_link">
-            <div class="nav_part_button first">Channels</div>
-        </a>
-        <a href="{{ url_for('messanger.channel', channel_id=channel.id) }}" class="block_link">
-            <div class="nav_part_button">Channel</div>
-        </a>
-        <a href="{{ url_for('messanger.channel_members', channel_id=channel.id) }}" class="block_link">
-            <div class="nav_part_button last">Members</div>
-        </a>
     </div>
 {% endblock %}

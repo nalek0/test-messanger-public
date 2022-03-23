@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'channel_base.html' %}
 
 <!-- Parameters:
 channel: Channel
@@ -20,7 +20,7 @@ channel: Channel
     <script type="text/javascript" src="{{ url_for('messanger.static', filename='channel_sockets.js') }}"></script>
 {% endblock %}
 
-{% block content %}
+{% block channel_content %}
     <div class="messages_window main_window accent-scrollbar" id="messages_window">
     </div>
     <div class="input_window main_window">
@@ -30,7 +30,7 @@ channel: Channel
     </div>
 
     <div class="nav_part">
-        <a href="{{ url_for('messanger.channels') }}" class="block_link">
+        <a href="{{ url_for('main.channels') }}" class="block_link">
             <div class="nav_part_button first">Channels</div>
         </a>
         <a href="{{ url_for('messanger.channel', channel_id=channel.id) }}" class="block_link">
