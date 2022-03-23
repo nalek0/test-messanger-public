@@ -113,8 +113,18 @@ class UserPermission {
 class Channel {
 	constructor(data) {
 		this.id = data.id;
+		this.title = data.title;
+		this.description = data.description;
 		this.members = data.members.map( it => new User(it) );
 		this.permissions = data.permissions.map( it => new ChannelPermission(it) );
+	}
+
+	updateChannelData(data) {
+		return makeRequest(
+			"POST",
+			"/api/channel/update_channel",
+			data
+		);
 	}
 
 	getAdmins() {

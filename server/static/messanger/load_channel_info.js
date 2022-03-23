@@ -1,6 +1,34 @@
-window.onload = async () => {
-	var client = await Client.getClient();
-	var channel = await Channel.getChannel(CHANNEL_ID);
+var client;
+var channel;
+
+async function update_channel(button) {
+	let data = {}
+	Array.from(button.parentNode.childNodes)
+			.filter( node => {
+				return node.tagName && (
+					(
+						node.tagName.toLowerCase() === "input" && 
+						(node.getAttribute("type") === "text" || node.getAttribute("type") === "hidden")
+					) || node.tagName.toLowerCase() === "textarea"
+				);
+			})
+			.forEach( node => data[node.getAttribute("name")] = node.value )
+	try {
+		await channel.updateChannelData(data);
+		console.log("HERE");
+		console.log(pushMessagesList);
+		pushMessagesList.addMessage(new PushMessage("Saved", "ok_message"));
+	} catch (error) {
+		if (error.status === 400 || error.status === 404)
+			pushMessagesList.addMessage(new PushMessage("Something is wrong with your parameters", "error"));
+		else 
+			pushMessagesList.addMessage(new PushMessage("Error, try again later", "error"));
+	}
+}
+
+window.addEventListener("load", async () => {
+	client = await Client.getClient();
+	channel = await Channel.getChannel(CHANNEL_ID);
 
 	// Chnanel info block:
 	if (channel.getUserPermission(client).hasPermission(WATCH_CHANNEL_INFO)) {
@@ -34,4 +62,7 @@ window.onload = async () => {
 				membersListNode.appendChild(liWrapper);
 			});
 	}
-};
+	if (channel.getUserPermission(client).hasPermission(EDIT_CHANNEL)) {
+		document.getElementById("moderator_block").classList.remove("hidden");
+	}
+});

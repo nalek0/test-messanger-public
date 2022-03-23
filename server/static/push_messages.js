@@ -27,6 +27,7 @@ class PushMessagesList {
 	}
 
 	addMessage(pushMessage) {
+		console.log("qwuyequwyeuiqwyeuiqwyiu");
 		this.pushMessages.push(pushMessage);
 		this.node.appendChild(pushMessage.node);
 		pushMessage.runFading()
@@ -35,6 +36,6 @@ class PushMessagesList {
 
 const pushMessagesList = new PushMessagesList();
 
-window.onload = () => {
+window.addEventListener("load", () => {
 	document.getElementById("push_messages_window").appendChild(pushMessagesList.node);
-};
+});

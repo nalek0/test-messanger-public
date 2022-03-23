@@ -76,7 +76,7 @@ class User(UserMixin, db.Model, Serializable):
         return f"personal_user_private_room_{self.id}"
 
     def personal_public_room(self):
-        return f"personal_user_private_room_{self.id}"
+        return f"personal_user_public_room_{self.id}"
 
     def join_all_required_rooms(self):
         join_room(self.personal_private_room())
@@ -99,6 +99,8 @@ class User(UserMixin, db.Model, Serializable):
 class Channel(db.Model, Serializable):
     __tablename__ = 'channel'
     id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(80), default="")
+    description = db.Column(db.String(400), default="")
     # members: List[User]
     messages = db.relationship("Message", backref='channel', lazy=True)
     permissions = db.relationship("ChannelPermission", backref='channel', lazy=True)
@@ -112,6 +114,8 @@ class Channel(db.Model, Serializable):
     def public_json(self) -> dict:
         return {
             "id": self.id,
+            "title": self.title,
+            "description": self.description,
             "members": serialize_list(self.members),
             "permissions": serialize_list(self.permissions)
         }
@@ -121,6 +125,16 @@ class Channel(db.Model, Serializable):
             lambda permission: permission.user.id == user.id,
             self.permissions
         )))
+
+    def personal_private_room(self):
+        return f"personal_channel_private_room_{self.id}"
+
+    def personal_public_room(self):
+        return f"personal_channel_public_room_{self.id}"
+
+    def updated(self):
+        socketio.emit("channel_private_data_changed", self.private_json(), room=self.personal_private_room())
+        socketio.emit("channel_public_data_changed", self.public_json(), room=self.personal_public_room())
 
     def __repr__(self):
         return f"<Channel {self.id}>"

@@ -27,6 +27,30 @@ def get_channel():
     return current_channel.public_json()
 
 
+@channel_api.route("/update_channel", methods=["POST"])
+@login_required
+def update_channel():
+    channel_id = request.json.get("channel_id")
+    channel = Channel.query.get(channel_id)
+    if channel is None or not channel\
+            .get_user_permission(current_user)\
+            .has_permission(permission=permissions.EDIT_CHANNEL):
+        abort(exceptions.Forbidden.code)
+    title = request.json.get("title") or ""
+    description = request.json.get("description") or ""
+
+    title.strip()
+    description.strip()
+
+    channel.title = title
+    channel.description = description
+    db.session.commit()
+
+    channel.updated()
+
+    return {"description": "OK"}
+
+
 class MessagePage(Serializable):
     def __init__(self, page: int, messages: List[Message]):
         self.page = page

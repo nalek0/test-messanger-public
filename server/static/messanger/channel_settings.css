@@ -1,0 +1,13 @@
+.hidden {
+	display: none;
+}
+
+.settings_block {
+	border-left: 0.15rem solid var(--accent-color);
+	border-right: 0.15rem solid var(--accent-color);
+	padding:  0.5rem;
+}
+
+.settings_block:not(:last-child) {
+	margin-bottom: 1rem;
+}
