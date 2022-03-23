@@ -5,7 +5,7 @@ from werkzeug import exceptions
 from database import Channel, User, db, \
     AdminRole, ModeratorRole, MemberRole
 from templating import render_base_template
-import permissions
+from permissions import *
 
 messanger = Blueprint("messanger", __name__,
                       url_prefix="/messanger",
@@ -57,20 +57,20 @@ def channel(channel_id: int):
     if current_channel is not None and \
             current_channel\
             .get_user_permission(current_user)\
-            .has_permission(permission=permissions.READ_CHANNEL):
+            .has_permission(permission=READ_CHANNEL):
         return render_base_template("channel.html", channel=current_channel)
     else:
         abort(exceptions.Forbidden.code)
 
 
-@messanger.route("/channel/<int:channel_id>/members")
+@messanger.route("/channel/<int:channel_id>/settings")
 @login_required
-def channel_members(channel_id: int):
+def channel_settings(channel_id: int):
     current_channel: Channel = Channel.query.get(channel_id)
     if current_channel is not None and \
             current_channel\
             .get_user_permission(current_user)\
-            .has_permission(permission=permissions.WATCH_CHANNEL_MEMBERS):
-        return render_base_template("channel_members.html", channel=current_channel)
+            .has_permission(permission=WATCH_CHANNEL_MEMBERS):
+        return render_base_template("channel_settings.html", channel=current_channel)
     else:
         abort(exceptions.Forbidden.code)

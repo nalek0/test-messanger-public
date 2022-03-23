@@ -111,7 +111,9 @@ class Channel(db.Model, Serializable):
 
     def public_json(self) -> dict:
         return {
-            "id": self.id
+            "id": self.id,
+            "members": serialize_list(self.members),
+            "permissions": serialize_list(self.permissions)
         }
 
     def get_user_permission(self, user: User):

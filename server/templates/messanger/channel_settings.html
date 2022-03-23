@@ -1,0 +1,32 @@
+{% extends 'channel_base.html' %}
+
+{% block top_stylesheets %}
+    <!-- <link rel="stylesheet" href="{{ url_for('messanger.static', filename='channel_settings.css') }}"> -->
+{% endblock %}
+
+{% block top_scripts %}
+    <script>
+        const CHANNEL_ID = {{ channel.id }};
+    </script>
+    <script type="text/javascript" src="{{ url_for('messanger.static', filename='load_channel_info.js') }}"></script>
+{% endblock %}
+
+{% block title %}
+    Channel settings
+{% endblock %}
+
+{% block channel_content %}
+<div class="main_part">
+    <div class="channel_info_block settings_block hidden" id="channel_info_block">
+        <div class="channel_info_title">Admins:</div>
+        <ul id="admins_list">
+        </ul>
+        <div class="channel_info_title">Moderators:</div>
+        <ul id="moderators_list">
+        </ul>
+        <div class="channel_info_title">Members:</div>
+        <ul id="members_list">
+        </ul>
+    </div>
+</div>
+{% endblock %}

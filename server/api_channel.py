@@ -13,6 +13,20 @@ channel_api = Blueprint("channel_api", __name__,
                         url_prefix="/channel")
 
 
+@channel_api.route("/get_channel", methods=["POST"])
+@login_required
+def get_channel():
+    channel_id = request.json.get("channel_id")
+    current_channel: Channel = Channel.query.get(channel_id)
+    if current_channel is None or \
+            not current_channel \
+            .get_user_permission(current_user) \
+            .has_permission(permission=permissions.WATCH_CHANNEL_INFO):
+        return abort(exceptions.Forbidden.code)
+
+    return current_channel.public_json()
+
+
 class MessagePage(Serializable):
     def __init__(self, page: int, messages: List[Message]):
         self.page = page
