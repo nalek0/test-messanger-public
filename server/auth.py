@@ -1,10 +1,11 @@
 from flask import Blueprint, \
     request, redirect, url_for, render_template
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, current_user
 import hashlib
 
 from database import db, User
 from login_manager import login_manager
+from templating import render_base_template
 
 auth = Blueprint("auth", __name__,
                  url_prefix="/auth",
@@ -19,7 +20,7 @@ def load_user(user_id: int):
 
 @auth.route("/signup", methods=["GET"])
 def signup_get():
-    return render_template("signup.html")
+    return render_base_template("signup.html")
 
 
 @auth.route("/signup", methods=["POST"])
@@ -52,7 +53,7 @@ def signup_post():
 
 @auth.route("/login", methods=["GET"])
 def login_get():
-    return render_template("login.html")
+    return render_base_template("login.html")
 
 
 @auth.route("/login", methods=["POST"])

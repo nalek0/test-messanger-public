@@ -1,9 +1,10 @@
 from flask import Blueprint, \
-    render_template, redirect, url_for, request, abort
+    redirect, url_for, request, abort
 from flask_login import login_required, current_user
 from werkzeug import exceptions
 
 from database import Channel, User, db
+from templating import render_base_template
 
 messanger = Blueprint("messanger", __name__,
                       url_prefix="/messanger",
@@ -15,7 +16,7 @@ messanger = Blueprint("messanger", __name__,
 @messanger.route("/channels/<int:page>")
 @login_required
 def channels(page: int = 0):
-    return render_template("channels.html", page=page, number_of_pages=1, client_user=current_user)
+    return render_base_template("channels.html", page=page, number_of_pages=1)
 
 
 @messanger.route("/make_channel", methods=["POST"])
@@ -52,8 +53,7 @@ def create_channel():
 def channel(channel_id: int):
     current_channel: Channel = Channel.query.get(channel_id)
     if current_channel is not None and current_channel.has_permissions_to_read(current_user):
-        return render_template("channel.html",
-                               channel=current_channel)
+        return render_base_template("channel.html", channel=current_channel)
     else:
         abort(exceptions.Forbidden.code)
 
@@ -63,7 +63,6 @@ def channel(channel_id: int):
 def channel_members(channel_id: int):
     current_channel: Channel = Channel.query.get(channel_id)
     if current_channel is not None and current_channel.has_permissions_to_read(current_user):
-        return render_template("channel_members.html",
-                               channel=current_channel)
+        return render_base_template("channel_members.html", channel=current_channel)
     else:
         abort(exceptions.Forbidden.code)

@@ -6,11 +6,11 @@ socketio = SocketIO()
 
 @socketio.on('connect')
 def socketio_event():
-    if current_user is not None:
+    if not current_user.is_anonymous:
         current_user.join_all_required_rooms()
 
 
 @socketio.on('disconnect')
 def socketio_event():
-    if current_user is not None:
+    if not current_user.is_anonymous:
         current_user.leave_all_required_rooms()
