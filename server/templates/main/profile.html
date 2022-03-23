@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'main_base.html' %}
 
 <!-- Parameters:
 * client_user
@@ -14,7 +14,7 @@
     Profile {{ user.username }}
 {% endblock %}
 
-{% block content %}
+{% block main_content %}
     <div class="main_part">
         {% if client_user is defined and user.id == client_user.id %}
             <i>Here you can see, how other people see your profile page:</i>
