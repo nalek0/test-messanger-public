@@ -5,6 +5,7 @@ from flask_login import login_required, current_user
 from werkzeug import exceptions
 
 from database import User, db, Channel, Message
+from server import permissions
 from server.serializable import Serializable, serialize_list
 from server_sockets import socketio
 
@@ -44,10 +45,11 @@ def load_messages():
     channel_id = request.json.get("channel_id")
     page = request.json.get("page")
     current_channel: Channel = Channel.query.get(channel_id)
-    if current_channel is None or not current_channel.has_permissions_to_read(current_user):
+    if current_channel is None or \
+            not current_channel\
+            .get_user_permission(current_user)\
+            .has_permission(permission=permissions.READ_CHANNEL):
         return abort(exceptions.Forbidden.code)
-
-    print("Loading messages for", len(current_channel.messages))
 
     def get_page_messages(p: int) -> List[Message]:
         return current_channel.messages[p * number_of_messages_on_page:(p + 1) * number_of_messages_on_page]
@@ -89,7 +91,10 @@ def load_messages():
 def send_message():
     channel_id = request.json.get("channel_id")
     current_channel: Channel = Channel.query.get(channel_id)
-    if current_channel is None or not current_channel.has_permissions_to_read(current_user):
+    if current_channel is None or \
+            not current_channel\
+            .get_user_permission(current_user)\
+            .has_permission(permission=permissions.SEND_MESSAGES):
         return abort(exceptions.Forbidden.code)
 
     author: User = current_user

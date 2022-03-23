@@ -1,4 +1,5 @@
 import datetime as datetime
+from typing import List
 
 from flask import url_for
 from flask_login import UserMixin
@@ -7,6 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from serializable import Serializable, serialize_list
 from server_sockets import socketio
+import permissions
 
 db = SQLAlchemy()
 
@@ -37,6 +39,7 @@ class User(UserMixin, db.Model, Serializable):
                                secondary=channel_membership_association_table,
                                backref="members")
     messages = db.relationship("Message", backref='author', lazy='dynamic')
+    permissions = db.relationship("ChannelPermission", backref='user', lazy=True)
 
     friends = db.relationship('User',
                               secondary=user_friendship_association_table,
@@ -98,6 +101,7 @@ class Channel(db.Model, Serializable):
     id = db.Column(db.Integer, primary_key=True)
     # members: List[User]
     messages = db.relationship("Message", backref='channel', lazy=True)
+    permissions = db.relationship("ChannelPermission", backref='channel', lazy=True)
 
     def room_id(self):
         return f"channel_room_{self.id}"
@@ -110,8 +114,73 @@ class Channel(db.Model, Serializable):
             "id": self.id
         }
 
+    def get_user_permission(self, user: User):
+        return UserPermission(user, self, list(filter(
+            lambda permission: permission.user.id == user.id,
+            self.permissions
+        )))
+
     def __repr__(self):
         return f"<Channel {self.id}>"
+
+
+class ChannelPermission(db.Model, Serializable):
+    __tablename__ = 'channel_permission'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), nullable=False)
+    permission_code = db.Column(db.Integer, nullable=False)
+
+    def has_permission(self, permission: int) -> bool:
+        return self.permission_code == permission
+
+    def public_json(self) -> dict:
+        return {
+            "user": self.user.public_json(),
+            "permission_code": self.permission_code
+        }
+
+
+class PermissionRole:
+    def __init__(self, *channel_permissions: List[int]):
+        self.channel_permissions = channel_permissions
+
+    def set_permissions_for(self, channel: Channel, user: User):
+        for permission_code in self.channel_permissions:
+            channel.permissions.append(ChannelPermission(user_id=user.id, permission_code=permission_code))
+
+
+AdminRole = PermissionRole(
+    permissions.WATCH_CHANNEL_INFO,
+    permissions.READ_CHANNEL,
+    permissions.WATCH_CHANNEL_MEMBERS,
+    permissions.SEND_MESSAGES,
+    permissions.EDIT_CHANNEL,
+    permissions.DELETE_CHANNEL)
+ModeratorRole = PermissionRole(
+    permissions.WATCH_CHANNEL_INFO,
+    permissions.READ_CHANNEL,
+    permissions.WATCH_CHANNEL_MEMBERS,
+    permissions.SEND_MESSAGES,
+    permissions.EDIT_CHANNEL)
+MemberRole = PermissionRole(
+    permissions.WATCH_CHANNEL_INFO,
+    permissions.READ_CHANNEL,
+    permissions.WATCH_CHANNEL_MEMBERS,
+    permissions.SEND_MESSAGES)
+
+
+class UserPermission:
+    def __init__(self, user: User, channel: Channel, channel_permissions: List[ChannelPermission]):
+        self.user = user
+        self.channel = channel
+        self.permissions = channel_permissions
+
+    def has_permission(self, permission: int) -> bool:
+        return any(map(
+            lambda channel_permission: channel_permission.has_permission(permission),
+            self.permissions
+        ))
 
 
 class Message(db.Model, Serializable):
