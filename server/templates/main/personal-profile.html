@@ -17,7 +17,7 @@
 {% endblock %}
 
 {% block title %}
-    Profile {{ user.nickname }}
+    Profile {{ client_user.nickname }}
 {% endblock %}
 
 {% block content %}
@@ -27,19 +27,36 @@
             <input type="text"
                    name="first_name"
                    class="base_input base_text_input"
-                   value="{{ user.first_name }}"
+                   value="{{ client_user.first_name }}"
                    minlength="1" maxlength="80"/>
             <div class="label">Last name:</div>
             <input type="text"
                    name="last_name"
                    class="base_input base_text_input"
-                   value="{{ user.last_name }}"
+                   value="{{ client_user.last_name }}"
                    minlength="1" maxlength="80"/>
             <div class="label">Description:</div>
             <textarea name="description"
                       class="base_input base_textarea accent-scrollbar"
-                      maxlength="400">{{ user.description }}</textarea>
+                      maxlength="400">{{ client_user.description }}</textarea>
             <input type="submit" value="Send changes" class="base_input base_submit_input" onclick="update_profile(this)">
         </div>
+    </div>
+
+
+
+    <div class="nav_part">
+        <a href="{{ url_for('main.client_profile') }}" class="block_link">
+            <div class="nav_part_button first">Profile</div>
+        </a>
+        <a href="{{ url_for('main.friends') }}" class="block_link">
+            <div class="nav_part_button">Friends</div>
+        </a>
+        <a href="{{ url_for('main.search_page') }}" class="block_link">
+            <div class="nav_part_button">Search user</div>
+        </a>
+        <a href="{{ url_for('messanger.channels') }}" class="block_link">
+            <div class="nav_part_button last">Channels</div>
+        </a>
     </div>
 {% endblock %}

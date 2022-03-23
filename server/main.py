@@ -24,7 +24,13 @@ def profile(username: str):
 @main.route("/profile")
 @login_required
 def client_profile():
-    return render_base_template("personal-profile.html", user=current_user)
+    return render_base_template("personal-profile.html")
+
+
+@main.route("/friends")
+@login_required
+def friends():
+    return render_base_template("friends.html")
 
 
 @main.route("/search")
