@@ -12,14 +12,26 @@ channel_api = Blueprint("channel_api", __name__,
                         url_prefix="/channel")
 
 
-class MessageList(Serializable):
-    def __init__(self, messages: List[Message], channel: Channel) -> None:
+class MessagePage(Serializable):
+    def __init__(self, page: int, messages: List[Message]):
+        self.page = page
         self.messages = messages
+
+    def public_json(self) -> dict:
+        return {
+            "page": self.page,
+            "messages": serialize_list(self.messages),
+        }
+
+
+class MessageList(Serializable):
+    def __init__(self, pages: List[MessagePage], channel: Channel) -> None:
+        self.pages = pages
         self.channel = channel
 
     def public_json(self) -> dict:
         return {
-            "messages": serialize_list(self.messages),
+            "pages": serialize_list(self.pages),
             "channel": self.channel.public_json(),
         }
 
@@ -27,14 +39,49 @@ class MessageList(Serializable):
 @channel_api.route("/load_messages", methods=["POST"])
 @login_required
 def load_messages():
+    number_of_messages_on_page = 20
+
     channel_id = request.json.get("channel_id")
+    page = request.json.get("page")
     current_channel: Channel = Channel.query.get(channel_id)
     if current_channel is None or not current_channel.has_permissions_to_read(current_user):
         return abort(exceptions.Forbidden.code)
 
-    return {
-        "data": MessageList(current_channel.messages, current_channel).public_json()
-    }
+    print("Loading messages for", len(current_channel.messages))
+
+    def get_page_messages(p: int) -> List[Message]:
+        return current_channel.messages[p * number_of_messages_on_page:(p + 1) * number_of_messages_on_page]
+
+    def get_last_page_number() -> int:
+        return len(current_channel.messages) // number_of_messages_on_page
+
+    if page is None:
+        # loading last 2 pages of messages
+        last_page = get_last_page_number()
+        if last_page == 0:
+            return {
+                "data": MessageList(
+                    [MessagePage(0, current_channel.messages)],
+                    current_channel
+                ).public_json()
+            }
+        else:
+            return {
+                "data": MessageList(
+                    [
+                        MessagePage(last_page - 1, get_page_messages(last_page - 1)),
+                        MessagePage(last_page, get_page_messages(last_page))
+                    ],
+                    current_channel
+                ).public_json()
+            }
+    else:
+        return {
+            "data": MessageList(
+                [MessagePage(page, get_page_messages(page))],
+                current_channel
+            ).public_json()
+        }
 
 
 @channel_api.route("/send_message", methods=["POST"])

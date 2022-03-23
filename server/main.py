@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, request, escape
-from flask_login import login_required, current_user
+from flask import Blueprint, request, escape
+from flask_login import login_required
 
 from database import User
 from templating import render_base_template

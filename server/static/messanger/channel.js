@@ -35,12 +35,20 @@ function showMessagesPrepend(messages) {
 	messagesWindow.prepend(...messages.map(messageToNodeConverFunction));
 }
 
+function isScrolledUp() {
+	return messagesWindow.scrollTop < 50;
+}
+
+function isScrolledDown() {
+	return (messagesWindow.scrollTop + messagesWindow.clientHeight === messagesWindow.scrollHeight);
+}
+
 function scrollDown() {
 	messagesWindow.scrollTop = messagesWindow.scrollHeight - messagesWindow.clientHeight;
 }
 
 function showMessagesAppend(messages) {
-	let shouldScrollDown = (messagesWindow.scrollTop + messagesWindow.clientHeight === messagesWindow.scrollHeight);
+	let shouldScrollDown = isScrolledDown();
 
 	messagesWindow.append(...messages.map(messageToNodeConverFunction));
 	if (shouldScrollDown)
@@ -49,11 +57,20 @@ function showMessagesAppend(messages) {
 
 async function loadMessages() {
 	messageList = await MessageList.loadMessages();
-	showMessagesPrepend(messageList.messages);
+	showMessagesPrepend(messageList.pages.flatMap( page => page.messages ));
+}
+
+async function messagesOnScrollEvent() {
+	if (isScrolledUp()) {
+		let messagesList = await messageList.loadPreviousPage();
+		if (messagesList)
+			showMessagesPrepend(messagesList.pages.flatMap( page => page.messages ));
+	}
 }
 
 window.onload = async () => {
 	messagesWindow = document.getElementById("messages_window");
+	messagesWindow.onscroll = messagesOnScrollEvent;
 	await loadMessages();
 	scrollDown();
 };

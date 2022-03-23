@@ -1,7 +1,7 @@
-from flask import Blueprint, \
-    request, redirect, url_for, render_template
-from flask_login import login_user, logout_user, current_user
 import hashlib
+
+from flask import Blueprint, request, redirect, url_for
+from flask_login import login_user, logout_user
 
 from database import db, User
 from login_manager import login_manager

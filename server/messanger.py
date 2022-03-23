@@ -1,5 +1,4 @@
-from flask import Blueprint, \
-    redirect, url_for, request, abort
+from flask import Blueprint, redirect, url_for, request, abort
 from flask_login import login_required, current_user
 from werkzeug import exceptions
 

@@ -1,6 +1,6 @@
 from configparser import ConfigParser
 
-from flask import Flask, request, jsonify, render_template, redirect, url_for
+from flask import Flask, request, redirect, url_for
 from werkzeug import exceptions
 
 from api import api as api_blueprint
@@ -10,6 +10,7 @@ from login_manager import login_manager
 from main import main as main_blueprint
 from messanger import messanger as messanger_blueprint
 from server_sockets import socketio
+from templating import render_base_template
 
 CONFIG = ConfigParser()
 CONFIG.read("flask.config")
@@ -34,7 +35,7 @@ def create_app():
         if request.path.startswith("/api"):
             return error, exceptions.NotFound.code
         else:
-            return render_template("404.html"), exceptions.NotFound.code
+            return render_base_template("404.html"), exceptions.NotFound.code
 
     @app.errorhandler(exceptions.Unauthorized.code)
     def unauthorized_errorhandler(error):

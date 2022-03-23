@@ -83,7 +83,36 @@ class Message {
 	}
 }
 
+class MessagePage {
+	constructor(data) {
+		this.page = data.page;
+		this.messages = data.messages;
+	}	
+}
+
 class MessageList {
+	_loading = false;
+
+	isShouldLoadPreviousPage() {
+		return !this._loading && this.pages[0].page !== 0;
+	}
+
+	async loadPreviousPage() {
+		if (this.isShouldLoadPreviousPage()) {
+			this._loading = true;
+
+			let messagePageData = await makeRequest("POST", "/api/channel/load_messages", { "channel_id": CHANNEL_ID, "page": this.pages[0].page - 1 });
+			let messageList = new MessageList(JSON.parse(messagePageData)["data"]);
+			this.pages.splice(0, 0, ...messageList.pages);
+			
+			this._loading = false;
+
+			return messageList;
+		}
+		else
+			return null;
+	}
+
 	sendMessage(text) {
 		let messageData = {
 			"channel_id": this.channel.id,
@@ -97,12 +126,10 @@ class MessageList {
 	}
 
 	constructor(data) {
-		this.messages = [];
-		for (let messageData of data.messages)
-			this.messages.push(new Message(messageData));
+		this.pages = [];
+		for (let pageData of data.pages)
+			this.pages.push(new MessagePage(pageData));
 		this.channel = new Channel(data.channel);
-
-		this.isAllMessagesLoaded = this.messages.length == 0;
 	}
 
 	static loadMessages() {
