@@ -1,4 +1,5 @@
 var messageList = null;
+let messagesWindow = null;
 
 function messageToNodeConverFunction(message) {
 	let message_node = document.createElement('div');
@@ -31,15 +32,19 @@ async function sendMessage() {
 }
 
 function showMessagesPrepend(messages) {
-	let messages_window = document.getElementById("messages_window");
+	messagesWindow.prepend(...messages.map(messageToNodeConverFunction));
+}
 
-	messages_window.prepend(...messages.map(messageToNodeConverFunction));
+function scrollDown() {
+	messagesWindow.scrollTop = messagesWindow.scrollHeight - messagesWindow.clientHeight;
 }
 
 function showMessagesAppend(messages) {
-	let messages_window = document.getElementById("messages_window");
+	let shouldScrollDown = (messagesWindow.scrollTop + messagesWindow.clientHeight === messagesWindow.scrollHeight);
 
-	messages_window.append(...messages.map(messageToNodeConverFunction));
+	messagesWindow.append(...messages.map(messageToNodeConverFunction));
+	if (shouldScrollDown)
+		scrollDown();
 }
 
 async function loadMessages() {
@@ -47,6 +52,8 @@ async function loadMessages() {
 	showMessagesPrepend(messageList.messages);
 }
 
-window.onload = () => {
-	loadMessages();
+window.onload = async () => {
+	messagesWindow = document.getElementById("messages_window");
+	await loadMessages();
+	scrollDown();
 };
