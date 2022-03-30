@@ -1,5 +1,5 @@
 from flask import Blueprint, request, escape
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 from database import User
 from templating import render_base_template
@@ -43,6 +43,7 @@ def search_page():
 @main.route("/channels/<int:page>")
 @login_required
 def channels(page: int = 0):
+    print(current_user.channels)
     return render_base_template("channels.html", page=page, number_of_pages=1)
 
 

@@ -5,7 +5,6 @@ from flask_login import login_required, current_user
 from werkzeug import exceptions
 
 from database import User, db, Channel, Message
-from server import permissions
 from server.serializable import Serializable, serialize_list
 from server_sockets import socketio
 
@@ -19,9 +18,7 @@ def get_channel():
     channel_id = request.json.get("channel_id")
     current_channel: Channel = Channel.query.get(channel_id)
     if current_channel is None or \
-            not current_channel \
-            .get_user_permission(current_user) \
-            .has_permission(permission=permissions.WATCH_CHANNEL_INFO):
+            not current_channel.get_member(current_user).has_permission("watch_channel_information_permission"):
         return abort(exceptions.Forbidden.code)
 
     return current_channel.public_json()
@@ -32,9 +29,8 @@ def get_channel():
 def update_channel():
     channel_id = request.json.get("channel_id")
     channel = Channel.query.get(channel_id)
-    if channel is None or not channel\
-            .get_user_permission(current_user)\
-            .has_permission(permission=permissions.EDIT_CHANNEL):
+    if channel is None or \
+            not channel.get_member(current_user).has_permission("edit_channel_permission"):
         abort(exceptions.Forbidden.code)
     title = request.json.get("title") or ""
     description = request.json.get("description") or ""
@@ -84,16 +80,17 @@ def load_messages():
     page = request.json.get("page")
     current_channel: Channel = Channel.query.get(channel_id)
     if current_channel is None or \
-            not current_channel\
-            .get_user_permission(current_user)\
-            .has_permission(permission=permissions.READ_CHANNEL):
+            not current_channel.get_member(current_user).has_permission("read_channel_permission"):
         return abort(exceptions.Forbidden.code)
 
     def get_page_messages(p: int) -> List[Message]:
-        return current_channel.messages[p * number_of_messages_on_page:(p + 1) * number_of_messages_on_page]
+        q = current_channel.messages.query
+        q.limit(number_of_messages_on_page)
+        q.offset(p * number_of_messages_on_page)
+        return q.all()
 
     def get_last_page_number() -> int:
-        return len(current_channel.messages) // number_of_messages_on_page
+        return current_channel.messages.count() // number_of_messages_on_page
 
     if page is None:
         # loading last 2 pages of messages
@@ -101,7 +98,7 @@ def load_messages():
         if last_page == 0:
             return {
                 "data": MessageList(
-                    [MessagePage(0, current_channel.messages)],
+                    [MessagePage(0, current_channel.messages.all())],
                     current_channel
                 ).public_json()
             }
@@ -130,9 +127,7 @@ def send_message():
     channel_id = request.json.get("channel_id")
     current_channel: Channel = Channel.query.get(channel_id)
     if current_channel is None or \
-            not current_channel\
-            .get_user_permission(current_user)\
-            .has_permission(permission=permissions.SEND_MESSAGES):
+            not current_channel.get_member(current_user).has_permission("send_messages_permission"):
         return abort(exceptions.Forbidden.code)
 
     author: User = current_user

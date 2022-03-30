@@ -10,7 +10,7 @@
 
 {% block main_content %}
     <div class="main_part">
-        {% if client_user.friends.count() != 0 %}
+        {% if client_user.friends|length %}
             <div class="create_channel_form">
                 <form action="{{ url_for('messanger.create_channel') }}" method="post"
                       class="base_form centered_form">
@@ -20,7 +20,7 @@
                             <input type="checkbox" name="companions"
                                    id="companion-{{ friend.id }}" value="{{ friend.id }}"
                                    class="base_checkbox_input">
-                            <label for="companion-{{ friend.id }}">{{ friend.full_name() }}</label>
+                            <label for="companion-{{ friend.id }}">{{ friend.full_name }}</label>
                         </div>
                     {% endfor %}
                     <input type="submit" value="Create a new channel" class="base_input base_submit_input">
@@ -36,7 +36,7 @@
                 <a href="{{ url_for('messanger.channel', channel_id=channel.id) }}" class="block_link">
                     <div class="channel_block">
                         With members:
-                        {% for member in channel.members %} {{ member.full_name() }} {% endfor %}
+                        {% for member in channel.members %} {{ member.full_name }} {% endfor %}
                     </div>
                 </a>
             {% endfor %}

@@ -2,10 +2,8 @@ from flask import Blueprint, redirect, url_for, request, abort
 from flask_login import login_required, current_user
 from werkzeug import exceptions
 
-from database import Channel, User, db, \
-    AdminRole, ModeratorRole, MemberRole
 from templating import render_base_template
-from permissions import *
+from database import User, Channel, ChannelRole, ChannelMember, db
 
 messanger = Blueprint("messanger", __name__,
                       url_prefix="/messanger",
@@ -27,25 +25,8 @@ def create_channel():
     if any(map(lambda el: el is None, other_users)):
         abort(exceptions.BadRequest.code)
 
-    new_channel = Channel()
-
-    # adding channel to list of user channels
-    current_user.channels.append(new_channel)
-    for user in other_users:
-        user.channels.append(new_channel)
-
-    # Adding members to channel
-    new_channel.members.append(current_user)
-    for user in other_users:
-        new_channel.members.append(user)
-
-    # Adding permissions to members
-    AdminRole.set_permissions_for(new_channel, current_user)
-    for user in other_users:
-        MemberRole.set_permissions_for(new_channel, user)
-
-    db.session.add(new_channel)
-    db.session.commit()
+    all_members = other_users + [current_user]
+    new_channel = Channel.make(current_user, all_members)
 
     return redirect(url_for("messanger.channel", channel_id=new_channel.id))
 
@@ -55,9 +36,7 @@ def create_channel():
 def channel(channel_id: int):
     current_channel: Channel = Channel.query.get(channel_id)
     if current_channel is not None and \
-            current_channel\
-            .get_user_permission(current_user)\
-            .has_permission(permission=READ_CHANNEL):
+            current_channel.get_member(current_user).has_permission("read_channel_permission"):
         return render_base_template("channel.html", channel=current_channel)
     else:
         abort(exceptions.Forbidden.code)
@@ -68,9 +47,7 @@ def channel(channel_id: int):
 def channel_settings(channel_id: int):
     current_channel: Channel = Channel.query.get(channel_id)
     if current_channel is not None and \
-            current_channel\
-            .get_user_permission(current_user)\
-            .has_permission(permission=WATCH_CHANNEL_MEMBERS):
+            current_channel.get_member(current_user).has_permission("watch_channel_members_permission"):
         return render_base_template("channel_settings.html", channel=current_channel)
     else:
         abort(exceptions.Forbidden.code)

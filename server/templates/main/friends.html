@@ -7,7 +7,7 @@
 {% block top_stylesheets %}{% endblock %}
 
 {% block title %}
-    {{ client_user.full_name() }} friends
+    {{ client_user.full_name }} friends
 {% endblock %}
 
 {% block main_content %}
@@ -15,8 +15,8 @@
         <h1>Friends:</h1>
         {% for friend in client_user.friends %}
             <div>
-                <a href="{{ friend.profile_url() }}" class="link">
-                    {{ friend.full_name() }}
+                <a href="{{ friend.profile_url }}" class="link">
+                    {{ friend.full_name }}
                 </a>
             </div>
         {% endfor %}

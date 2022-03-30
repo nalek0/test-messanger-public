@@ -16,7 +16,10 @@ def app():
 
     yield app
 
-    os.remove("database.db")
+    try:
+        os.remove("database.db")
+    except:
+        pass
     db.create_all(app=app)
 
 
@@ -54,33 +57,33 @@ def test_main(client):
         def logout() -> None:
             client.get("/auth/logout")
 
-        index_get: TestResponse = client.get("main.index")
-        assert(200 == index_get.status_code, index_get.response)
+        index_get: TestResponse = client.get("/")
+        assert index_get.status_code in range(200, 300)
 
         admin = signup_user(admin_signup_data)
-        assert(200 == admin.status_code, admin.response)
+        assert admin.status_code in range(300, 400)
         admin_id = current_user.id
         logout()
 
         user: TestResponse = signup_user(user_signup_data)
-        assert(200 == user.status_code, user.response)
+        assert user.status_code in range(300, 400)
         user_id = current_user.id
         logout()
 
         user_l = login_user(user_signup_data)
-        assert(200 == user_l.status_code, user_l.response)
-        add_friend_user = client.post("/api/user/add-friend", json={
+        assert user_l.status_code in range(300, 400)
+        add_friend_user = client.post("/api/user/add_friend", json={
             "user_id": admin_id
         })
-        assert(200 == add_friend_user.status_code, add_friend_user.response)
-        assert(1 == current_user.friends.count(), f"Number of friends: {current_user.friends.count()}")
+        assert add_friend_user.status_code in range(200, 300)
+        assert 1 == len(current_user.friends)
         logout()
 
         admin_l = login_user(admin_signup_data)
-        assert(200 == admin_l.status_code, admin_l.response)
+        assert admin_l.status_code in range(300, 400)
         add_friend_admin = client.post("/api/user/add_friend", json={
             "user_id": user_id
         })
-        assert(200 == add_friend_admin.status_code, add_friend_admin.response)
-        assert(1 == current_user.friends.count(), f"Number of friends: {current_user.friends.count()}")
+        assert add_friend_admin.status_code in range(200, 300)
+        assert 1 == len(current_user.friends)
         logout()
