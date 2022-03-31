@@ -1,3 +1,4 @@
+from pprint import pprint
 from typing import List, Optional
 
 from flask import Blueprint, request, abort
@@ -58,11 +59,36 @@ def get_member():
             not current_channel.get_member(current_user).has_permission("watch_channel_members_permission"):
         return abort(exceptions.Forbidden.code)
     else:
-        member: Optional[ChannelMember] = current_channel.get_member(user).p
+        member: Optional[ChannelMember] = current_channel.get_member(user)
         if member is None:
             return abort(exceptions.BadRequest.code)
         else:
             return member.public_json()
+
+
+@channel_api.route("/fetch_members", methods=["POST"])
+@login_required
+def fetch_members():
+    channel_id = request.json.get("channel_id")
+    current_channel: Channel = Channel.query.get(channel_id)
+    if current_channel is None or \
+            not current_channel.get_member(current_user).has_permission("watch_channel_members_permission"):
+        return abort(exceptions.Forbidden.code)
+
+    # Searching permissions:
+    permissions = request.json.get("permissions")
+    if permissions is not None:
+        result = list(filter(
+            lambda channel_member: all(map(lambda permission: channel_member.has_permission(permission), permissions)),
+            current_channel.members
+        ))[:20]
+        print("result:", result)
+        pprint(serialize_list(result))
+        return {
+            "data": serialize_list(result)
+        }
+
+    return abort(exceptions.BadRequest.code)
 
 
 class MessagePage(Serializable):

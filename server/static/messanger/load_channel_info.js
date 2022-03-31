@@ -15,8 +15,6 @@ async function update_channel(button) {
 			.forEach( node => data[node.getAttribute("name")] = node.value )
 	try {
 		await channel.updateChannelData(data);
-		console.log("HERE");
-		console.log(pushMessagesList);
 		pushMessagesList.addMessage(new PushMessage("Saved", "ok_message"));
 	} catch (error) {
 		if (error.status === 400 || error.status === 404)
@@ -29,23 +27,15 @@ async function update_channel(button) {
 window.addEventListener("load", async () => {
 	client = await Client.getClient();
 	channel = await Channel.getChannel(CHANNEL_ID);
+	client_member = await channel.getMember(client);
 
 	// Chnanel info block:
-	if (channel.getUserPermission(client).hasPermission(WATCH_CHANNEL_INFO)) {
+	if (client_member.hasPermission("watch_channel_information_permission")) {
 		document.getElementById("channel_info_block").classList.remove("hidden");
 
-		let adminsListNode = document.getElementById("admins_list");
-		channel.getAdmins()
-			.map( user => user.getLinkNode() )
-			.forEach(node => {
-				let liWrapper = document.createElement("li");
-				liWrapper.appendChild(node);
-				adminsListNode.appendChild(liWrapper);
-			});
-
 		let moderatorsListNode = document.getElementById("moderators_list");
-		channel.getModerators()
-			.map( user => user.getLinkNode() )
+		(await channel.getModerators())
+			.map( channel_member => channel_member.user.getLinkNode() )
 			.forEach(node => {
 				let liWrapper = document.createElement("li");
 				liWrapper.appendChild(node);
@@ -54,15 +44,15 @@ window.addEventListener("load", async () => {
 
 
 		let membersListNode = document.getElementById("members_list");
-		channel.getMembers()
-			.map( user => user.getLinkNode() )
+		(await channel.getMembers())
+			.map( channel_member => channel_member.user.getLinkNode() )
 			.forEach(node => {
 				let liWrapper = document.createElement("li");
 				liWrapper.appendChild(node);
 				membersListNode.appendChild(liWrapper);
 			});
 	}
-	if (channel.getUserPermission(client).hasPermission(EDIT_CHANNEL)) {
+	if (client_member.hasPermission("edit_channel_permission")) {
 		document.getElementById("moderator_block").classList.remove("hidden");
 	}
 });

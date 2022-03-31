@@ -230,6 +230,7 @@ class ChannelRole(db.Model, Serializable):
 
     def public_json(self) -> dict:
         return {
+            "id": self.id,
             "role_name": self.role_name,
             "watch_channel_information_permission": self.watch_channel_information_permission,
             "watch_channel_members_permission": self.watch_channel_members_permission,

@@ -60,6 +60,10 @@ class ChannelMember {
 		this.channel = new Channel(data.channel);
 		this.user_roles = data.user_roles.map( it => new UserRole(it) );
 	}
+
+	hasPermission(permissionName) {
+		return this.user_roles.some( user_role => user_role.role[permissionName] );
+	}
 }
 
 class Channel {
@@ -78,16 +82,34 @@ class Channel {
 		);
 	}
 
-	getAdmins() {
-		return this.members.filter( member => this.getUserPermission(member).hasPermission(DELETE_CHANNEL) );
+	async getModerators() {
+		return makeRequest(
+			"POST",
+			"/api/channel/fetch_members",
+			{ 
+				"channel_id": this.id,
+				"permissions": ["edit_channel_permission"]
+			}
+		).then( response => JSON.parse(response)['data'].map ( it => new ChannelMember(it) ) );
 	}
 
-	getModerators() {
-		return this.members.filter( member => this.getUserPermission(member).hasPermission(EDIT_CHANNEL) );
+	async getMembers() {
+		return makeRequest(
+			"POST",
+			"/api/channel/fetch_members",
+			{ 
+				"channel_id": this.id,
+				"permissions": ["watch_channel_information_permission", "watch_channel_members_permission", "read_channel_permission", "send_messages_permission"]
+			}
+		).then( response => JSON.parse(response)['data'].map ( it => new ChannelMember(it) ) );
 	}
 
 	getMember(user) {
-		return this.members;
+		return makeRequest(
+			"POST",
+			"/api/channel/get_member",
+			{ "channel_id": this.id, "user_id": user.id }
+		).then( response => new ChannelMember(JSON.parse(response)) );
 	}
 
 	static getChannel(channel_id) {
