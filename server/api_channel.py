@@ -1,4 +1,3 @@
-from pprint import pprint
 from typing import List, Optional
 
 from flask import Blueprint, request, abort
@@ -82,8 +81,6 @@ def fetch_members():
             lambda channel_member: all(map(lambda permission: channel_member.has_permission(permission), permissions)),
             current_channel.members
         ))[:20]
-        print("result:", result)
-        pprint(serialize_list(result))
         return {
             "data": serialize_list(result)
         }

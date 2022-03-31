@@ -1,5 +1,4 @@
 import datetime as datetime
-from pprint import pprint
 from typing import List
 
 from flask import url_for
