@@ -32,14 +32,78 @@ class User {
 	}
 }
 
+class ChannelRole {
+	constructor(data) {
+		this.id = data.id;
+		this.role_name = data.role_name;
+		this.watch_channel_information_permission = data.watch_channel_information_permission;
+		this.watch_channel_members_permission = data.watch_channel_members_permission;
+		this.read_channel_permission = data.read_channel_permission;
+		this.send_messages_permission = data.send_messages_permission;
+		this.edit_channel_permission = data.edit_channel_permission;
+	}
+}
+
+class UserRole {
+	constructor(data) {
+		this.id = data.id;
+		this.user = new User(data.user);
+		this.role = new ChannelRole(data.role);
+		this.channel = new Channel(data.channel);
+	}
+}
+
+class ChannelMember {
+	constructor(data) {
+		this.id = data.id;
+		this.user = new User(data.user);
+		this.channel = new Channel(data.channel);
+		this.user_roles = data.user_roles.map( it => new UserRole(it) );
+	}
+}
+
+class Channel {
+	constructor(data) {
+		this.id = data.id;
+		this.title = data.title;
+		this.description = data.description;
+		this.roles = data.roles.map( it => new ChannelRole(it) );
+	}
+
+	updateChannelData(data) {
+		return makeRequest(
+			"POST",
+			"/api/channel/update_channel",
+			data
+		);
+	}
+
+	getAdmins() {
+		return this.members.filter( member => this.getUserPermission(member).hasPermission(DELETE_CHANNEL) );
+	}
+
+	getModerators() {
+		return this.members.filter( member => this.getUserPermission(member).hasPermission(EDIT_CHANNEL) );
+	}
+
+	getMember(user) {
+		return this.members;
+	}
+
+	static getChannel(channel_id) {
+		return makeRequest(
+			"POST",
+			"/api/channel/get_channel",
+			{ "channel_id": channel_id }
+		).then(response => new Channel(JSON.parse(response)));
+	}
+}
+
 class Client extends User {
-	static _instance = null;
-	static _loading = false;
-
-
 	constructor(data) {
 		super(data);
 		this.friends = data.friends.map(friendData => new User(friendData));
+		this.channels = data.channels.map(channelData => new Channel(channelData));
 	}
 
 	isFriend(user) {
@@ -80,75 +144,6 @@ class Client extends User {
 			"/api/user/update_profile",
 			data
 		);
-	}
-}
-
-// Permission codes:
-var WATCH_CHANNEL_INFO = 0
-var READ_CHANNEL = 1
-var WATCH_CHANNEL_MEMBERS = 2
-var SEND_MESSAGES = 3
-var EDIT_CHANNEL = 4
-var DELETE_CHANNEL = 5
-
-class ChannelPermission {
-	constructor(data) {
-		this.user = new User(data.user);
-		this.permissionCode = data.permission_code;
-	}
-}
-
-class UserPermission {
-	constructor(user, channel, channelPermissions) {
-		this.user = user;
-		this.channel = channel;
-		this.channelPermissions = channelPermissions;
-	}
-
-	hasPermission(permissionCode) {
-		return this.channelPermissions.some( it => it.permissionCode === permissionCode );
-	}
-}
-
-class Channel {
-	constructor(data) {
-		this.id = data.id;
-		this.title = data.title;
-		this.description = data.description;
-		this.members = data.members.map( it => new User(it) );
-		this.permissions = data.permissions.map( it => new ChannelPermission(it) );
-	}
-
-	updateChannelData(data) {
-		return makeRequest(
-			"POST",
-			"/api/channel/update_channel",
-			data
-		);
-	}
-
-	getAdmins() {
-		return this.members.filter( member => this.getUserPermission(member).hasPermission(DELETE_CHANNEL) );
-	}
-
-	getModerators() {
-		return this.members.filter( member => this.getUserPermission(member).hasPermission(EDIT_CHANNEL) );
-	}
-
-	getMembers() {
-		return this.members;
-	}
-
-	getUserPermission(user) {
-        return new UserPermission(user, this, this.permissions.filter( it => it.user.id === user.id ));
-	}
-
-	static getChannel(channel_id) {
-		return makeRequest(
-			"POST",
-			"/api/channel/get_channel",
-			{ "channel_id": channel_id }
-		).then(response => new Channel(JSON.parse(response)));
 	}
 }
 

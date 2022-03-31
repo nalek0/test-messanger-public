@@ -86,6 +86,7 @@ class User(UserMixin, db.Model, Serializable):
             "last_name": self.last_name,
             "username": self.username,
             "description": self.description,
+            "channels": serialize_list(self.channels),
             "friends": serialize_list(self.friends)
         }
 
@@ -148,17 +149,8 @@ class Channel(db.Model, Serializable):
         return {
             "id": self.id,
             "title": self.title,
-            "description": self.description
-        }
-
-    def private_json(self) -> dict:
-        return {
-            "id": self.id,
-            "title": self.title,
             "description": self.description,
-            "members": serialize_list(self.members),
-            "roles": serialize_list(self.roles),
-            "user_roles": serialize_list(self.user_roles),
+            "roles": serialize_list(self.roles)
         }
 
     def updated(self):
@@ -280,6 +272,7 @@ class ChannelMember(db.Model, Serializable):
 
     def public_json(self) -> dict:
         return {
+            "id": self.id,
             "user": self.user.public_json(),
             "channel": self.channel.public_json(),
             "user_roles": serialize_list(self.user_roles)
@@ -304,6 +297,7 @@ class UserRole(db.Model, Serializable):
 
     def public_json(self) -> dict:
         return {
+            "id": self.id,
             "user": self.user.public_json(),
             "role": self.role.public_json(),
             "channel": self.channel.public_json()

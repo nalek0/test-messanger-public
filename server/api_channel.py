@@ -1,10 +1,10 @@
-from typing import List
+from typing import List, Optional
 
 from flask import Blueprint, request, abort
 from flask_login import login_required, current_user
 from werkzeug import exceptions
 
-from database import User, db, Channel, Message
+from database import User, db, Channel, Message, ChannelMember
 from server.serializable import Serializable, serialize_list
 from server_sockets import socketio
 
@@ -31,7 +31,7 @@ def update_channel():
     channel = Channel.query.get(channel_id)
     if channel is None or \
             not channel.get_member(current_user).has_permission("edit_channel_permission"):
-        abort(exceptions.Forbidden.code)
+        return abort(exceptions.Forbidden.code)
     title = request.json.get("title") or ""
     description = request.json.get("description") or ""
 
@@ -45,6 +45,24 @@ def update_channel():
     channel.updated()
 
     return {"description": "OK"}
+
+
+@channel_api.route("/get_member", methods=["POST"])
+@login_required
+def get_member():
+    channel_id = request.json.get("channel_id")
+    user_id = request.json.get("user_id")
+    current_channel: Channel = Channel.query.get(channel_id)
+    user: User = User.query.get(user_id)
+    if current_channel is None or user is None or \
+            not current_channel.get_member(current_user).has_permission("watch_channel_members_permission"):
+        return abort(exceptions.Forbidden.code)
+    else:
+        member: Optional[ChannelMember] = current_channel.get_member(user).p
+        if member is None:
+            return abort(exceptions.BadRequest.code)
+        else:
+            return member.public_json()
 
 
 class MessagePage(Serializable):
@@ -145,7 +163,7 @@ def send_message():
     db.session.add(new_message)
     db.session.commit()
 
-    socketio.emit("channel_message", new_message.public_json(), room=new_message.channel.room_id())
+    socketio.emit("channel_message", new_message.public_json(), room=new_message.channel.room_id)
 
     return {
         "data": new_message.public_json()
