@@ -27,7 +27,6 @@ class PushMessagesList {
 	}
 
 	addMessage(pushMessage) {
-		console.log("qwuyequwyeuiqwyeuiqwyiu");
 		this.pushMessages.push(pushMessage);
 		this.node.appendChild(pushMessage.node);
 		pushMessage.runFading()
