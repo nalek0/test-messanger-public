@@ -34,10 +34,7 @@
             <h2>Results</h2>
             {% for channel in client_user.channels %}
                 <a href="{{ url_for('messanger.channel', channel_id=channel.id) }}" class="block_link">
-                    <div class="channel_block">
-                        With members:
-                        {% for member in channel.members %} {{ member.full_name }} {% endfor %}
-                    </div>
+                    <div class="channel_block">Channel `{{ channel.title }}` </div>
                 </a>
             {% endfor %}
         {% else %}
