@@ -126,6 +126,22 @@ class Channel {
 	}
 }
 
+class ChannelInvitation {
+	constructor(data) {
+		this.id = data.id;
+		this.user 		= new User(data.user);
+		this.channel 	= new Channel(data.channel);
+	}
+
+	static deleteInvitation(invitation_id) {
+		return makeRequest(
+			"POST",
+			"/api/channel/delete_invitation",
+			{ "invitation_id": invitation_id }
+		);
+	}
+}
+
 class Client extends User {
 	constructor(data) {
 		super(data);

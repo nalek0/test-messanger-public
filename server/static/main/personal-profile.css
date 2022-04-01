@@ -1,0 +1,28 @@
+.profile {
+    text-align: center;
+}
+
+.profile > .label {
+    text-align: left;
+}
+
+.invitation {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+.invitation:not(:last-child) {
+    margin-bottom: 1rem;
+}
+
+.channel_title {
+    padding: 0.5rem;
+    background: var(--accent-color);
+    border-radius: 0.25rem;
+    color: black;
+    margin-right: 0.25rem;
+    margin-left: 0.25rem;
+    width: 100%;
+    text-align: left;
+}

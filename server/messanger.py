@@ -25,8 +25,7 @@ def create_channel():
     if any(map(lambda el: el is None, other_users)):
         abort(exceptions.BadRequest.code)
 
-    all_members = other_users + [current_user]
-    new_channel = ChannelFabric(title, description, all_members, current_user).make()
+    new_channel = ChannelFabric(title, description, other_users, current_user).make()
 
     return redirect(url_for("messanger.channel", channel_id=new_channel.id))
 

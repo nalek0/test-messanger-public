@@ -13,3 +13,8 @@ async function update_profile(button) {
 			pushMessagesList.addMessage(new PushMessage("Error, try again later", "error"));
 	}
 }
+
+async function delete_invitation(invitation_id) {
+	await ChannelInvitation.deleteInvitation(invitation_id);
+	location.reload();
+}

@@ -52,6 +52,9 @@ class User(UserMixin, db.Model, Serializable):
     user_roles = db.relationship('UserRole',
                                  backref='user',
                                  lazy=True)
+    user_invitations = db.relationship('ChannelInvitation',
+                                       backref='user',
+                                       lazy=True)
 
     @property
     def profile_url(self):
@@ -125,6 +128,9 @@ class Channel(db.Model, Serializable):
     user_roles = db.relationship("UserRole",
                                  backref="channel",
                                  lazy="dynamic")
+    member_invitations = db.relationship('ChannelInvitation',
+                                         backref='channel',
+                                         lazy='dynamic')
 
     @property
     def room_id(self):
@@ -145,6 +151,10 @@ class Channel(db.Model, Serializable):
         ))
         return None if len(results) == 0 else results[0]
 
+    def add_member(self, user: User):
+        if self.get_member(user) is None:
+            self.members.append(ChannelMember.make(user, self))
+
     def public_json(self) -> dict:
         return {
             "id": self.id,
@@ -161,11 +171,35 @@ class Channel(db.Model, Serializable):
         return f"<Channel {self.id}>"
 
 
+class ChannelInvitation(db.Model, Serializable):
+    __tablename__ = 'channel_invitation'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column('user_id', db.Integer, db.ForeignKey('user.id'), nullable=False)
+    channel_id = db.Column('channel_id', db.Integer, db.ForeignKey('channel.id'), nullable=False)
+
+    def public_json(self) -> dict:
+        return {
+            "id": self.id,
+            "user": self.user.public_json(),
+            "channel": self.channel.public_json(),
+        }
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def use(self):
+        self.channel.add_member(self.user)
+        self.user.updated()
+        self.channel.updated()
+        self.delete()
+
+
 class ChannelFabric:
-    def __init__(self, title: str, description: str, users: List[User], owner: User):
+    def __init__(self, title: str, description: str, other_users: List[User], owner: User):
         self.title = title
         self.description = description
-        self.users = users
+        self.other_users = other_users
         self.owner = owner
 
     def make(self) -> Channel:
@@ -175,11 +209,7 @@ class ChannelFabric:
         )
 
         # init members
-        members = list(map(
-            lambda _user: ChannelMember.make(_user, new_channel),
-            self.users
-        ))
-        new_channel.members = members
+        new_channel.members = [ChannelMember.make(self.owner, new_channel)]
 
         # init roles:
         member_role = ChannelRole.create_member_role(new_channel)
@@ -190,15 +220,18 @@ class ChannelFabric:
         new_channel.roles.append(moderator_role)
 
         # set required roles to members
-        for user in self.users:
-            new_channel.user_roles.append(UserRole.make(user, member_role, new_channel))
+        new_channel.user_roles.append(UserRole.make(self.owner, member_role, new_channel))
         new_channel.user_roles.append(UserRole.make(self.owner, moderator_role, new_channel))
 
         # update channels for members:
-        for user in self.users:
-            user.channels.append(new_channel)
+        self.owner.channels.append(new_channel)
 
         db.session.add(new_channel)
+        db.session.commit()
+
+        # send invitations
+        for user in self.other_users:
+            db.session.add(ChannelInvitation(user_id=user.id, channel_id=new_channel.id))
         db.session.commit()
 
         return new_channel

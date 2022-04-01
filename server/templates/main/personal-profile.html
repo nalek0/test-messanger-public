@@ -5,15 +5,7 @@
 {% endblock %}
 
 {% block top_stylesheets %}
-    <style>
-        .profile {
-            text-align: center;
-        }
-
-        .profile > .label {
-            text-align: left;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('main.static', filename='personal-profile.css') }}">
 {% endblock %}
 
 {% block title %}
@@ -39,6 +31,20 @@
             <textarea name="description"
                       class="base_input base_textarea accent-scrollbar"
                       maxlength="400">{{ client_user.description }}</textarea>
+            <div class="label">Invitations:</div>
+            {% for invitation in client_user.user_invitations %}
+            <div class="invitation">
+                <div class="channel_title">
+                    {{ invitation.channel.title }}
+                </div>
+                <div class="delete_button_place">
+                    <input type="submit"
+                           class="base_input base_submit_input"
+                           value="Delete this invitation"
+                           onclick="delete_invitation({{ invitation.id }})">
+                </div>
+            </div>
+            {% endfor %}
             <input type="submit" value="Send changes" class="base_input base_submit_input" onclick="update_profile(this)">
         </div>
     </div>

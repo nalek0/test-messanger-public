@@ -4,7 +4,7 @@ from flask import Blueprint, request, abort
 from flask_login import login_required, current_user
 from werkzeug import exceptions
 
-from database import User, db, Channel, Message, ChannelMember
+from database import User, db, Channel, Message, ChannelMember, ChannelInvitation
 from server.serializable import Serializable, serialize_list
 from server_sockets import socketio
 
@@ -43,6 +43,19 @@ def update_channel():
     db.session.commit()
 
     channel.updated()
+
+    return {"description": "OK"}
+
+
+@channel_api.route("/delete_invitation", methods=["POST"])
+@login_required
+def delete_invitation():
+    invitation_id = request.json["invitation_id"]
+    invitation = ChannelInvitation.query.get(invitation_id)
+    if invitation is None or invitation.user.id != current_user.id:
+        return abort(exceptions.Forbidden.code)
+
+    invitation.delete()
 
     return {"description": "OK"}
 
