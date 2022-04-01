@@ -14,6 +14,11 @@ async function update_profile(button) {
 	}
 }
 
+async function use_invitation(invitation_id) {
+	let newChannel = await ChannelInvitation.useInvitation(invitation_id);
+	window.location = "/channels";
+}
+
 async function delete_invitation(invitation_id) {
 	await ChannelInvitation.deleteInvitation(invitation_id);
 	location.reload();

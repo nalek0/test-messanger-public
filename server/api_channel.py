@@ -60,6 +60,19 @@ def delete_invitation():
     return {"description": "OK"}
 
 
+@channel_api.route("/use_invitation", methods=["POST"])
+@login_required
+def use_invitation():
+    invitation_id = request.json["invitation_id"]
+    invitation = ChannelInvitation.query.get(invitation_id)
+    if invitation is None or invitation.user.id != current_user.id:
+        return abort(exceptions.Forbidden.code)
+
+    invitation.use()
+
+    return {"description": "OK"}
+
+
 @channel_api.route("/get_member", methods=["POST"])
 @login_required
 def get_member():

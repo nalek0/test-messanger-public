@@ -37,12 +37,14 @@
                 <div class="channel_title">
                     {{ invitation.channel.title }}
                 </div>
-                <div class="delete_button_place">
-                    <input type="submit"
-                           class="base_input base_submit_input"
-                           value="Delete this invitation"
-                           onclick="delete_invitation({{ invitation.id }})">
-                </div>
+                <input type="submit"
+                       class="base_input base_submit_input"
+                       value="Use this invitation"
+                       onclick="use_invitation({{ invitation.id }})">
+                <input type="submit"
+                       class="base_input base_submit_input"
+                       value="Delete this invitation"
+                       onclick="delete_invitation({{ invitation.id }})">
             </div>
             {% endfor %}
             <input type="submit" value="Send changes" class="base_input base_submit_input" onclick="update_profile(this)">

@@ -133,6 +133,14 @@ class ChannelInvitation {
 		this.channel 	= new Channel(data.channel);
 	}
 
+	static useInvitation(invitation_id) {
+		return makeRequest(
+			"POST",
+			"/api/channel/use_invitation",
+			{ "invitation_id": invitation_id }
+		);
+	}
+
 	static deleteInvitation(invitation_id) {
 		return makeRequest(
 			"POST",

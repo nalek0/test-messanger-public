@@ -184,11 +184,11 @@ class ChannelInvitation(db.Model, Serializable):
             "channel": self.channel.public_json(),
         }
 
-    def delete(self):
+    def delete(self) -> None:
         db.session.delete(self)
         db.session.commit()
 
-    def use(self):
+    def use(self) -> None:
         self.channel.add_member(self.user)
         self.user.updated()
         self.channel.updated()
