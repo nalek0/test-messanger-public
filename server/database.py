@@ -75,7 +75,8 @@ class User(UserMixin, db.Model, Serializable):
             "first_name": self.first_name,
             "last_name": self.last_name,
             "username": self.username,
-            "description": self.description
+            "description": self.description,
+            "profile_url": self.profile_url
         }
 
     def private_json(self) -> dict:

@@ -1,23 +1,20 @@
 class User {
 	constructor(data) {
         this.id = data.id;
-        this.first_name = data.first_name;
-        this.last_name = data.last_name;
-        this.username = data.username;
-        this.description = data.description;
+        this.first_name 	= data.first_name;
+        this.last_name 		= data.last_name;
+        this.username 		= data.username;
+        this.description 	= data.description;
+        this.profile_url 	= data.profile_url;
 	}
 
 	getFullName() {
 		return `${this.first_name} ${this.last_name}`;
 	}
 
-	getProfileURL() {
-		return `/profile/${this.username}`;
-	}
-
 	getLinkNode() {
 		let linkNode = document.createElement("a");
-		linkNode.href = this.getProfileURL();
+		linkNode.href = this.profile_url();
 		linkNode.classList.add("link");
 		linkNode.textContent = this.getFullName();
 		return linkNode;
@@ -36,28 +33,28 @@ class ChannelRole {
 	constructor(data) {
 		this.id = data.id;
 		this.role_name = data.role_name;
-		this.watch_channel_information_permission = data.watch_channel_information_permission;
-		this.watch_channel_members_permission = data.watch_channel_members_permission;
-		this.read_channel_permission = data.read_channel_permission;
-		this.send_messages_permission = data.send_messages_permission;
-		this.edit_channel_permission = data.edit_channel_permission;
+		this.watch_channel_information_permission 	= data.watch_channel_information_permission;
+		this.watch_channel_members_permission 		= data.watch_channel_members_permission;
+		this.read_channel_permission 				= data.read_channel_permission;
+		this.send_messages_permission 				= data.send_messages_permission;
+		this.edit_channel_permission 				= data.edit_channel_permission;
 	}
 }
 
 class UserRole {
 	constructor(data) {
 		this.id = data.id;
-		this.user = new User(data.user);
-		this.role = new ChannelRole(data.role);
-		this.channel = new Channel(data.channel);
+		this.user 		= new User(data.user);
+		this.role 		= new ChannelRole(data.role);
+		this.channel 	= new Channel(data.channel);
 	}
 }
 
 class ChannelMember {
 	constructor(data) {
 		this.id = data.id;
-		this.user = new User(data.user);
-		this.channel = new Channel(data.channel);
+		this.user 		= new User(data.user);
+		this.channel 	= new Channel(data.channel);
 		this.user_roles = data.user_roles.map( it => new UserRole(it) );
 	}
 
@@ -69,9 +66,9 @@ class ChannelMember {
 class Channel {
 	constructor(data) {
 		this.id = data.id;
-		this.title = data.title;
-		this.description = data.description;
-		this.roles = data.roles.map( it => new ChannelRole(it) );
+		this.title 			= data.title;
+		this.description 	= data.description;
+		this.roles 			= data.roles.map( it => new ChannelRole(it) );
 	}
 
 	updateChannelData(data) {
@@ -99,7 +96,12 @@ class Channel {
 			"/api/channel/fetch_members",
 			{ 
 				"channel_id": this.id,
-				"permissions": ["watch_channel_information_permission", "watch_channel_members_permission", "read_channel_permission", "send_messages_permission"]
+				"permissions": [
+					"watch_channel_information_permission", 
+					"watch_channel_members_permission", 
+					"read_channel_permission", 
+					"send_messages_permission"
+				]
 			}
 		).then( response => JSON.parse(response)['data'].map ( it => new ChannelMember(it) ) );
 	}
@@ -117,15 +119,15 @@ class Channel {
 			"POST",
 			"/api/channel/get_channel",
 			{ "channel_id": channel_id }
-		).then(response => new Channel(JSON.parse(response)));
+		).then( response => new Channel(JSON.parse(response)) );
 	}
 }
 
 class Client extends User {
 	constructor(data) {
 		super(data);
-		this.friends = data.friends.map(friendData => new User(friendData));
-		this.channels = data.channels.map(channelData => new Channel(channelData));
+		this.friends 	= data.friends.map(friendData => new User(friendData));
+		this.channels 	= data.channels.map(channelData => new Channel(channelData));
 	}
 
 	isFriend(user) {
@@ -172,17 +174,17 @@ class Client extends User {
 class Message {
 	constructor(data) {
         this.id = data.id;
-        this.text = data.text;
-        this.datetime = Date.parse(data.datetime);
-        this.channel = new Channel(data.channel);
-        this.author = new User(data.author);
+        this.text 		= data.text;
+        this.datetime 	= Date.parse(data.datetime);
+        this.channel 	= new Channel(data.channel);
+        this.author 	= new User(data.author);
 	}
 }
 
 class MessagePage {
 	constructor(data) {
-		this.page = data.page;
-		this.messages = data.messages;
+		this.page 		= data.page;
+		this.messages 	= data.messages;
 	}	
 }
 
@@ -197,7 +199,14 @@ class MessageList {
 		if (this.isShouldLoadPreviousPage()) {
 			this._loading = true;
 
-			let messagePageData = await makeRequest("POST", "/api/channel/load_messages", { "channel_id": CHANNEL_ID, "page": this.pages[0].page - 1 });
+			let messagePageData = await makeRequest(
+				"POST", 
+				"/api/channel/load_messages", 
+				{ 
+					"channel_id": CHANNEL_ID, 
+					"page": this.pages[0].page - 1
+				}
+			);
 			let messageList = new MessageList(JSON.parse(messagePageData)["data"]);
 			this.pages.splice(0, 0, ...messageList.pages);
 			
