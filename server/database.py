@@ -157,14 +157,27 @@ class Channel(db.Model, Serializable):
         socketio.emit("channel_private_data_changed", self.private_json(), room=self.personal_private_room)
         socketio.emit("channel_public_data_changed", self.public_json(), room=self.personal_public_room)
 
-    @staticmethod
-    def make(creator: User, all_users: List[User]):
-        new_channel = Channel()
+    def __repr__(self):
+        return f"<Channel {self.id}>"
+
+
+class ChannelFabric:
+    def __init__(self, title: str, description: str, users: List[User], owner: User):
+        self.title = title
+        self.description = description
+        self.users = users
+        self.owner = owner
+
+    def make(self) -> Channel:
+        new_channel = Channel(
+            title=self.title,
+            description=self.description
+        )
 
         # init members
         members = list(map(
-            lambda u: ChannelMember.make(u, new_channel),
-            all_users
+            lambda _user: ChannelMember.make(_user, new_channel),
+            self.users
         ))
         new_channel.members = members
 
@@ -177,21 +190,18 @@ class Channel(db.Model, Serializable):
         new_channel.roles.append(moderator_role)
 
         # set required roles to members
-        for user in all_users:
+        for user in self.users:
             new_channel.user_roles.append(UserRole.make(user, member_role, new_channel))
-        new_channel.user_roles.append(UserRole.make(creator, moderator_role, new_channel))
+        new_channel.user_roles.append(UserRole.make(self.owner, moderator_role, new_channel))
 
         # update channels for members:
-        for user in all_users:
+        for user in self.users:
             user.channels.append(new_channel)
 
         db.session.add(new_channel)
         db.session.commit()
 
         return new_channel
-
-    def __repr__(self):
-        return f"<Channel {self.id}>"
 
 
 class ChannelRole(db.Model, Serializable):

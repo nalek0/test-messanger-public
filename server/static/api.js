@@ -14,7 +14,7 @@ class User {
 
 	getLinkNode() {
 		let linkNode = document.createElement("a");
-		linkNode.href = this.profile_url();
+		linkNode.href = this.profile_url;
 		linkNode.classList.add("link");
 		linkNode.textContent = this.getFullName();
 		return linkNode;
@@ -110,7 +110,10 @@ class Channel {
 		return makeRequest(
 			"POST",
 			"/api/channel/get_member",
-			{ "channel_id": this.id, "user_id": user.id }
+			{ 
+				"channel_id": this.id, 
+				"user_id": user.id 
+			}
 		).then( response => new ChannelMember(JSON.parse(response)) );
 	}
 
@@ -238,7 +241,11 @@ class MessageList {
 	}
 
 	static loadMessages() {
-		let requestPromise = makeRequest("POST", "/api/channel/load_messages", { "channel_id": CHANNEL_ID });
+		let requestPromise = makeRequest(
+			"POST", 
+			"/api/channel/load_messages", 
+			{ "channel_id": CHANNEL_ID }
+		);
 
 	    return requestPromise.then(value => {
 			let data = JSON.parse(value)["data"];

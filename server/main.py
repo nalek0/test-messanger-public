@@ -46,6 +46,12 @@ def channels(page: int = 0):
     return render_base_template("channels.html", page=page, number_of_pages=1)
 
 
+@main.route("/create_channel")
+@login_required
+def create_channel():
+    return render_base_template("create_channel.html")
+
+
 @main.route("/search", methods=["POST"])
 def search_result():
     query = escape(request.form["query"])

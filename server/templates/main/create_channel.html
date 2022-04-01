@@ -1,0 +1,44 @@
+{% extends 'main_base.html' %}
+
+{% block top_stylesheets %}
+    <link rel="stylesheet" href="{{ url_for('messanger.static', filename='channels.css') }}">
+{% endblock %}
+
+{% block title %}
+    Channels: {{ page }} / {{ number_of_pages }}
+{% endblock %}
+
+{% block main_content %}
+    <div class="main_part">
+        {% if client_user.friends|length %}
+            <div class="create_channel_form">
+                <form action="{{ url_for('messanger.create_channel') }}" method="post"
+                      class="centered_form">
+                    <div class="label">Title:</div>
+                    <input type="text"
+                           name="title"
+                           class="base_input base_text_input"
+                           placeholder="Title..."
+                           minlength="1" maxlength="80" required/>
+                    <div class="label">Description:</div>
+                    <textarea name="description"
+                              class="base_input base_textarea accent-scrollbar"
+                              placeholder="Description..."
+                              maxlength="400" required></textarea>
+                    <div style="font-size: 1.75rem;">Choose people, who will receive your invitation:</div>
+                    {% for friend in client_user.friends %}
+                        <div class="friend_block">
+                            <input type="checkbox" name="companions"
+                                   id="companion-{{ friend.id }}" value="{{ friend.id }}"
+                                   class="base_checkbox_input">
+                            <label for="companion-{{ friend.id }}">{{ friend.full_name }}</label>
+                        </div>
+                    {% endfor %}
+                    <input type="submit" value="Create a new channel" class="base_input base_submit_input">
+                </form>
+            </div>
+        {% else %}
+            <h2>You have no friends, try to find a few to make a new channel</h2>
+        {% endif %}
+    </div>
+{% endblock %}

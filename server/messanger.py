@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from werkzeug import exceptions
 
 from templating import render_base_template
-from database import User, Channel, ChannelRole, ChannelMember, db
+from database import User, Channel, ChannelRole, ChannelMember, db, ChannelFabric
 
 messanger = Blueprint("messanger", __name__,
                       url_prefix="/messanger",
@@ -14,19 +14,19 @@ messanger = Blueprint("messanger", __name__,
 @messanger.route("/make_channel", methods=["POST"])
 @login_required
 def create_channel():
-    companions = request.form.get("companions")
-    if companions is None:
-        return abort(exceptions.BadRequest.code)
+    title = request.form["title"]
+    description = request.form["description"]
+    companions = request.form.get("companions", [])
 
     other_users = list(map(
-        lambda companion: User.query.get(companion),
+        lambda companion_id: User.query.get(companion_id),
         companions
     ))
     if any(map(lambda el: el is None, other_users)):
         abort(exceptions.BadRequest.code)
 
     all_members = other_users + [current_user]
-    new_channel = Channel.make(current_user, all_members)
+    new_channel = ChannelFabric(title, description, all_members, current_user).make()
 
     return redirect(url_for("messanger.channel", channel_id=new_channel.id))
 
