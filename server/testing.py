@@ -16,12 +16,6 @@ def app():
 
     yield app
 
-    try:
-        os.remove("database.db")
-    except:
-        pass
-    db.create_all(app=app)
-
 
 @pytest.fixture()
 def client(app):
