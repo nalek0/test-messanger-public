@@ -1,5 +1,5 @@
 import datetime as datetime
-from typing import List, Optional
+from typing import Optional, List
 
 from flask import url_for
 from flask_login import UserMixin
@@ -57,19 +57,19 @@ class User(UserMixin, db.Model, Serializable):
                                        lazy=True)
 
     @property
-    def profile_url(self):
+    def profile_url(self) -> str:
         return url_for("main.profile", username=self.username)
 
     @property
-    def full_name(self):
+    def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
 
     @property
-    def personal_public_room(self):
+    def personal_public_room(self) -> str:
         return f"personal_user_public_room_{self.id}"
 
     @property
-    def personal_private_room(self):
+    def personal_private_room(self) -> str:
         return f"personal_user_private_room_{self.id}"
 
     def public_json(self) -> dict:
@@ -93,21 +93,21 @@ class User(UserMixin, db.Model, Serializable):
             "friends": serialize_list(self.friends)
         }
 
-    def join_all_required_rooms(self):
+    def join_all_required_rooms(self) -> None:
         join_room(self.personal_private_room)
         for channel in self.channels:
             join_room(channel.room_id)
 
-    def leave_all_required_rooms(self):
+    def leave_all_required_rooms(self) -> None:
         leave_room(self.personal_private_room)
         for channel in self.channels:
             leave_room(channel.room_id)
 
-    def updated(self):
+    def updated(self) -> None:
         socketio.emit("user_private_data_changed", self.private_json(), room=self.personal_private_room)
         socketio.emit("user_public_data_changed", self.public_json(), room=self.personal_public_room)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"User username={self.username}>"
 
 
@@ -134,15 +134,15 @@ class Channel(db.Model, Serializable):
                                          lazy='dynamic')
 
     @property
-    def room_id(self):
+    def room_id(self) -> str:
         return f"channel_room_{self.id}"
 
     @property
-    def personal_public_room(self):
+    def personal_public_room(self) -> str:
         return f"personal_channel_public_room_{self.id}"
 
     @property
-    def personal_private_room(self):
+    def personal_private_room(self) -> str:
         return f"personal_channel_private_room_{self.id}"
 
     def get_member(self, user: User) -> Optional[User]:
@@ -152,14 +152,14 @@ class Channel(db.Model, Serializable):
         ))
         return None if len(results) == 0 else results[0]
 
-    def add_member(self, user: User):
+    def add_member(self, user: User) -> None:
         if self.get_member(user) is None:
-            member = ChannelMember.make(user, self)
+            member = ChannelMemberFabric(user, self).make()
 
             user.membership.append(member)
             user.channels.append(self)
             member_role = next(filter(lambda el: el.id == self.default_role_id, self.roles), None)
-            self.user_roles.append(UserRole.make(user, member_role, self))
+            self.user_roles.append(UserRoleFabric(user, member_role, self).make())
             self.members.append(member)
 
             db.session.add(member)
@@ -173,11 +173,11 @@ class Channel(db.Model, Serializable):
             "roles": serialize_list(self.roles)
         }
 
-    def updated(self):
+    def updated(self) -> None:
         socketio.emit("channel_private_data_changed", self.private_json(), room=self.personal_private_room)
         socketio.emit("channel_public_data_changed", self.public_json(), room=self.personal_public_room)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Channel id={self.id}, title={self.title}>"
 
 
@@ -208,54 +208,6 @@ class ChannelInvitation(db.Model, Serializable):
         return f"<ChannelInvitation user={self.user}, channel={self.channel}>"
 
 
-class ChannelFabric:
-    def __init__(self, title: str, description: str, other_users: List[User], owner: User):
-        self.title = title
-        self.description = description
-        self.other_users = other_users
-        self.owner = owner
-
-    def make(self) -> Channel:
-        new_channel = Channel(
-            title=self.title,
-            description=self.description
-        )
-
-        # init members
-        new_channel.members = [ChannelMember.make(self.owner, new_channel)]
-
-        # init roles:
-        member_role = ChannelRole.create_member_role(new_channel)
-        moderator_role = ChannelRole.create_moderator_role(new_channel)
-        db.session.add(member_role)
-        db.session.add(moderator_role)
-        new_channel.roles.append(member_role)
-        new_channel.roles.append(moderator_role)
-
-        new_channel.default_role_id = member_role.id
-
-        # set required roles to members
-        new_channel.user_roles.append(UserRole.make(self.owner, member_role, new_channel))
-        new_channel.user_roles.append(UserRole.make(self.owner, moderator_role, new_channel))
-
-        # update channels for members:
-        self.owner.channels.append(new_channel)
-
-        db.session.add(new_channel)
-        db.session.commit()
-
-        # init default roles:
-        member_role.default_for = new_channel
-        new_channel.default_roles = [member_role]
-
-        # send invitations
-        for user in self.other_users:
-            db.session.add(ChannelInvitation(user_id=user.id, channel_id=new_channel.id))
-        db.session.commit()
-
-        return new_channel
-
-
 class ChannelRole(db.Model, Serializable):
     __tablename__ = 'channel_role'
     id = db.Column(db.Integer, primary_key=True)
@@ -271,25 +223,6 @@ class ChannelRole(db.Model, Serializable):
                                  lazy="dynamic")
     channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), nullable=False)
 
-    @staticmethod
-    def create_member_role(channel):
-        return ChannelRole(
-            role_name="Member",
-            channel=channel,
-            watch_channel_information_permission=True,
-            watch_channel_members_permission=True,
-            read_channel_permission=True,
-            send_messages_permission=True
-        )
-
-    @staticmethod
-    def create_moderator_role(channel):
-        return ChannelRole(
-            role_name="Moderator",
-            channel=channel,
-            edit_channel_permission=True
-        )
-
     def public_json(self) -> dict:
         return {
             "id": self.id,
@@ -302,6 +235,22 @@ class ChannelRole(db.Model, Serializable):
         }
 
 
+class UserRole(db.Model, Serializable):
+    __tablename__ = 'user_role'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    role_id = db.Column(db.Integer, db.ForeignKey('channel_role.id'), nullable=False)
+    channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), nullable=False)
+
+    def public_json(self) -> dict:
+        return {
+            "id": self.id,
+            "user": self.user.public_json(),
+            "role": self.role.public_json(),
+            "channel": self.channel.public_json()
+        }
+
+
 class ChannelMember(db.Model, Serializable):
     __tablename__ = "channel_member"
     id = db.Column(db.Integer, primary_key=True)
@@ -309,23 +258,11 @@ class ChannelMember(db.Model, Serializable):
     channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), nullable=False)
 
     @property
-    def user_roles(self):
+    def user_roles(self) -> List[UserRole]:
         return list(filter(
             lambda user_role: user_role.user.id == self.user.id,
             self.channel.user_roles
         ))
-
-    @staticmethod
-    def make(user: User, channel: Channel):
-        member = ChannelMember(
-            user_id=user.id,
-            channel_id=channel.id
-        )
-        user.membership.append(member)
-        channel.members.append(member)
-        db.session.add(member)
-        db.session.commit()
-        return member
 
     def has_permission(self, permission_name: str) -> bool:
         assert hasattr(ChannelRole, permission_name)
@@ -341,33 +278,8 @@ class ChannelMember(db.Model, Serializable):
             "user_roles": serialize_list(self.user_roles)
         }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<ChannelMember id={self.id}, user={self.user}, channel={self.channel}>"
-
-
-class UserRole(db.Model, Serializable):
-    __tablename__ = 'user_role'
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    role_id = db.Column(db.Integer, db.ForeignKey('channel_role.id'), nullable=False)
-    channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), nullable=False)
-
-    @staticmethod
-    def make(user: User, role: ChannelRole, channel: Channel):
-        user_role = UserRole(
-            user_id=user.id,
-            role_id=role.id,
-            channel_id=channel.id
-        )
-        return user_role
-
-    def public_json(self) -> dict:
-        return {
-            "id": self.id,
-            "user": self.user.public_json(),
-            "role": self.role.public_json(),
-            "channel": self.channel.public_json()
-        }
 
 
 class Message(db.Model, Serializable):
@@ -387,5 +299,117 @@ class Message(db.Model, Serializable):
             "author": self.author.public_json(),
         }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Message {self.id}>"
+
+
+# Fabrics:
+class ChannelFabric:
+    def __init__(self,
+                 title: str,
+                 description: str,
+                 other_users: List[User],
+                 owner: User):
+        self.title = title
+        self.description = description
+        self.other_users = other_users
+        self.owner = owner
+
+    def make(self) -> Channel:
+        new_channel = Channel(
+            title=self.title,
+            description=self.description
+        )
+
+        # init members
+        new_channel.members = [ChannelMemberFabric(self.owner, new_channel).make()]
+
+        # init roles:
+        channel_role_fabric = ChannelRoleFabric(new_channel)
+        member_role = channel_role_fabric.create_member_role()
+        moderator_role = channel_role_fabric.create_moderator_role()
+        db.session.add(member_role)
+        db.session.add(moderator_role)
+        new_channel.roles.append(member_role)
+        new_channel.roles.append(moderator_role)
+
+        new_channel.default_role_id = member_role.id
+
+        # set required roles to members
+        new_channel.user_roles.append(UserRoleFabric(self.owner, member_role, new_channel).make())
+        new_channel.user_roles.append(UserRoleFabric(self.owner, moderator_role, new_channel).make())
+
+        # update channels for members:
+        self.owner.channels.append(new_channel)
+
+        db.session.add(new_channel)
+        db.session.commit()
+
+        # init default roles:
+        member_role.default_for = new_channel
+        new_channel.default_roles = [member_role]
+
+        # send invitations
+        for user in self.other_users:
+            db.session.add(ChannelInvitation(user_id=user.id, channel_id=new_channel.id))
+        db.session.commit()
+
+        return new_channel
+
+
+class ChannelRoleFabric:
+    def __init__(self, channel: Channel):
+        self.channel = channel
+
+    def create_member_role(self) -> ChannelRole:
+        return ChannelRole(
+            role_name="Member",
+            channel=self.channel,
+            watch_channel_information_permission=True,
+            watch_channel_members_permission=True,
+            read_channel_permission=True,
+            send_messages_permission=True
+        )
+
+    def create_moderator_role(self) -> ChannelRole:
+        return ChannelRole(
+            role_name="Moderator",
+            channel=self.channel,
+            edit_channel_permission=True
+        )
+
+
+class UserRoleFabric:
+    def __init__(self,
+                 user: User,
+                 role: ChannelRole,
+                 channel: Channel):
+        self.user = user
+        self.role = role
+        self.channel = channel
+
+    def make(self) -> UserRole:
+        return UserRole(
+            user_id=self.user.id,
+            role_id=self.role.id,
+            channel_id=self.channel.id
+        )
+
+
+class ChannelMemberFabric:
+    def __init__(self,
+                 user: User,
+                 channel: Channel):
+        self.user = user
+        self.channel = channel
+
+    def make(self) -> ChannelMember:
+        member = ChannelMember(
+            user_id=self.user.id,
+            channel_id=self.channel.id
+        )
+        self.user.membership.append(member)
+        self.channel.members.append(member)
+        db.session.add(member)
+        db.session.commit()
+        return member

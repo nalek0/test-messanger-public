@@ -2,8 +2,8 @@ from flask import Blueprint, redirect, url_for, request, abort
 from flask_login import login_required, current_user
 from werkzeug import exceptions
 
+from database import User, Channel, ChannelFabric
 from templating import render_base_template
-from database import User, Channel, ChannelRole, ChannelMember, db, ChannelFabric
 
 messanger = Blueprint("messanger", __name__,
                       url_prefix="/messanger",
