@@ -1,5 +1,5 @@
 import datetime as datetime
-from typing import List
+from typing import List, Optional
 
 from flask import url_for
 from flask_login import UserMixin
@@ -108,7 +108,7 @@ class User(UserMixin, db.Model, Serializable):
         socketio.emit("user_public_data_changed", self.public_json(), room=self.personal_public_room)
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return f"User username={self.username}>"
 
 
 class Channel(db.Model, Serializable):
@@ -125,6 +125,7 @@ class Channel(db.Model, Serializable):
     roles = db.relationship("ChannelRole",
                             backref="channel",
                             lazy=True)
+    default_role_id = db.Column(db.Integer)
     user_roles = db.relationship("UserRole",
                                  backref="channel",
                                  lazy="dynamic")
@@ -144,7 +145,7 @@ class Channel(db.Model, Serializable):
     def personal_private_room(self):
         return f"personal_channel_private_room_{self.id}"
 
-    def get_member(self, user: User):
+    def get_member(self, user: User) -> Optional[User]:
         results = list(filter(
             lambda mem: mem.user.id == user.id,
             self.members
@@ -153,7 +154,16 @@ class Channel(db.Model, Serializable):
 
     def add_member(self, user: User):
         if self.get_member(user) is None:
-            self.members.append(ChannelMember.make(user, self))
+            member = ChannelMember.make(user, self)
+
+            user.membership.append(member)
+            user.channels.append(self)
+            member_role = next(filter(lambda el: el.id == self.default_role_id, self.roles), None)
+            self.user_roles.append(UserRole.make(user, member_role, self))
+            self.members.append(member)
+
+            db.session.add(member)
+            db.session.commit()
 
     def public_json(self) -> dict:
         return {
@@ -168,7 +178,7 @@ class Channel(db.Model, Serializable):
         socketio.emit("channel_public_data_changed", self.public_json(), room=self.personal_public_room)
 
     def __repr__(self):
-        return f"<Channel {self.id}>"
+        return f"<Channel id={self.id}, title={self.title}>"
 
 
 class ChannelInvitation(db.Model, Serializable):
@@ -193,6 +203,9 @@ class ChannelInvitation(db.Model, Serializable):
         self.user.updated()
         self.channel.updated()
         self.delete()
+
+    def __repr__(self) -> str:
+        return f"<ChannelInvitation user={self.user}, channel={self.channel}>"
 
 
 class ChannelFabric:
@@ -219,6 +232,8 @@ class ChannelFabric:
         new_channel.roles.append(member_role)
         new_channel.roles.append(moderator_role)
 
+        new_channel.default_role_id = member_role.id
+
         # set required roles to members
         new_channel.user_roles.append(UserRole.make(self.owner, member_role, new_channel))
         new_channel.user_roles.append(UserRole.make(self.owner, moderator_role, new_channel))
@@ -228,6 +243,10 @@ class ChannelFabric:
 
         db.session.add(new_channel)
         db.session.commit()
+
+        # init default roles:
+        member_role.default_for = new_channel
+        new_channel.default_roles = [member_role]
 
         # send invitations
         for user in self.other_users:
@@ -321,6 +340,9 @@ class ChannelMember(db.Model, Serializable):
             "channel": self.channel.public_json(),
             "user_roles": serialize_list(self.user_roles)
         }
+
+    def __repr__(self):
+        return f"<ChannelMember id={self.id}, user={self.user}, channel={self.channel}>"
 
 
 class UserRole(db.Model, Serializable):
