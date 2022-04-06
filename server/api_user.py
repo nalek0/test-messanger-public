@@ -1,7 +1,9 @@
-from flask import Blueprint, request
-from flask_login import login_required, current_user
+import hashlib
 
-from api_exceptions import APINotFound, APIBadRequest
+from flask import Blueprint, request
+from flask_login import login_required, current_user, login_user, logout_user
+
+from api_exceptions import APINotFound, APIBadRequest, APIForbidden
 from database import User, db
 
 user_api = Blueprint("user_api", __name__,
@@ -16,6 +18,57 @@ def get_user():
         return user.public_json()
     else:
         raise APINotFound(f"User with given ({user_id}) is not found!")
+
+
+@user_api.route("/client/signup", methods=["POST"])
+def client_signup():
+    first_name = request.json["first_name"].strip()
+    last_name = request.json["last_name"].strip()
+    username = request.json["username"].lower().strip()
+    password = request.json["password"]
+
+    if User.query.filter_by(username=username).first() is not None:
+        raise APIForbidden(f"Username {username} is already taken")
+    if not username.isalpha():
+        raise APIForbidden(f"Username must contain only letters")
+    if first_name == "" or last_name == "":
+        raise APIBadRequest("First and last names must be not blank")
+
+    new_user = User(
+        first_name=first_name,
+        last_name=last_name,
+        username=username,
+        password_hash=hashlib.sha256(password.encode('utf-8')).hexdigest()
+    )
+    db.session.add(new_user)
+    db.session.commit()
+
+    login_user(new_user, remember=True)
+
+    return current_user.private_json()
+
+
+@user_api.route("/client/login", methods=["POST"])
+def login_post():
+    username = request.json["username"].lower()
+    password = request.json["password"]
+
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        raise APINotFound("No user with given username is found")
+    if user.password_hash != hashlib.sha256(password.encode('utf-8')).hexdigest():
+        raise APIForbidden("Wrong password")
+
+    login_user(user, remember=True)
+
+    return current_user.private_json()
+
+
+@user_api.route("/client/logout")
+@login_required
+def logout():
+    logout_user()
+    return {"description": "OK"}
 
 
 @user_api.route("/client/get", methods=["GET"])

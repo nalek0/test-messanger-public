@@ -15,6 +15,30 @@
 > 
 > **Login required**: _True_
 
+### **POST** `/client/signup`
+
+> **Parameters**:
+> * `first_name` (_required, not blank_)
+> * `last_name` (_required, not blank_)
+> * `username` (_required, unique_)
+> * `password` (_required_)
+> 
+> **Login required**: _False_
+
+### **POST** `/client/login`
+
+> **Parameters**:
+> * `username` (_required_)
+> * `password` (_required_)
+> 
+> **Login required**: _False_
+
+### **POST** `/client/logout`
+
+> **Parameters**: No
+> 
+> **Login required**: _True_
+
 ### **POST** `/client/update`
 
 > **Parameters**:
