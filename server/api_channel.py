@@ -18,7 +18,7 @@ class APIDoNotHavePermission(APIForbidden):
         super().__init__(f"You do not have '{permission}' permission")
 
 
-@channel_api.route("/get_channel", methods=["GET"])
+@channel_api.route("/get", methods=["GET"])
 @login_required
 def get_channel():
     channel_id = request.args["channel_id"]
@@ -32,7 +32,7 @@ def get_channel():
         raise APIDoNotHavePermission("watch_channel_information_permission")
 
 
-@channel_api.route("/update_channel", methods=["POST"])
+@channel_api.route("/update", methods=["POST"])
 @login_required
 def update_channel():
     channel_id = request.json["channel_id"]
@@ -55,7 +55,7 @@ def update_channel():
     return {"description": "OK"}
 
 
-@channel_api.route("/get_member", methods=["GET"])
+@channel_api.route("/member/get", methods=["GET"])
 @login_required
 def get_member():
     channel_id = request.args["channel_id"]
@@ -79,7 +79,7 @@ def get_member():
             return member.public_json()
 
 
-@channel_api.route("/fetch_members", methods=["GET"])
+@channel_api.route("/member/fetch", methods=["GET"])
 @login_required
 def fetch_members():
     channel_id = request.json["channel_id"]
@@ -116,7 +116,7 @@ def fetch_members():
     return {"data": serialize_list(results_on_page)}
 
 
-@channel_api.route("/fetch_messages", methods=["GET"])
+@channel_api.route("/message/fetch", methods=["GET"])
 @login_required
 def fetch_messages():
     channel_id = request.args["channel_id"]
@@ -140,7 +140,7 @@ def fetch_messages():
     return {"data": serialize_list(messages_query.all())}
 
 
-@channel_api.route("/send_message", methods=["POST"])
+@channel_api.route("/message/send", methods=["POST"])
 @login_required
 def send_message():
     channel_id = request.json["channel_id"]

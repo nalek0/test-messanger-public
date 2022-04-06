@@ -2,20 +2,20 @@
 
 ## User API (`/api/user`)
 
-### **GET** `/get_client_user`
-
-> **Parameters**: Нет
-> 
-> **Login required**: _True_
-
-### **GET** `/get_user`
+### **GET** `/get`
 
 > **Parameters**:
 > * `user_id` (_required_)
 > 
 > **Login required**: _False_
 
-### **POST** `/update_profile`
+### **GET** `/client/get`
+
+> **Parameters**: Нет
+> 
+> **Login required**: _True_
+
+### **POST** `/client/update`
 
 > **Parameters**:
 > * `first_name` (_not required, not blank_)
@@ -24,14 +24,14 @@
 > 
 > **Login required**: _True_
 
-### **POST** add_friend
+### **POST** `/client/friend/add`
 
 > **Parameters**:
 > * `user_id` (_required_)
 > 
 > **Login required**: _True_
 
-### **POST** `/remove_friend`
+### **POST** `/client/friend/remove`
 
 > **Parameters**:
 > * `user_id` (_required_)
@@ -40,7 +40,7 @@
 
 ## Channel API (`/api/channel`)
 
-### **GET** `/get_channel`
+### **GET** `/get`
 
 > **Parameters**:
 > * `channel_id` (_required_)
@@ -49,7 +49,7 @@
 > 
 > **Required channel permission**: `watch_channel_information_permission`
 
-### **POST** `/update_channel`
+### **POST** `/update`
 
 > **Parameters**:
 > * `channel_id` (_required_)
@@ -60,7 +60,7 @@
 > 
 > **Required channel permission**: `edit_channel_permission`
 
-### **GET** `/get_member`
+### **GET** `/member/get`
 
 > **Parameters**:
 > * `channel_id` (_required_)
@@ -70,7 +70,7 @@
 > 
 > **Required channel permission**: `watch_channel_members_permission`
 
-### **GET** `/fetch_members`
+### **GET** `/member/fetch`
 
 > **Parameters**:
 > * `channel_id` (_required_)
@@ -82,7 +82,7 @@
 > 
 > **Required channel permission**: `watch_channel_members_permission`
 
-### **GET** `/fetch_messages`
+### **GET** `/message/fetch`
 
 > **Parameters**:
 > * `channel_id` (_required_)
@@ -93,7 +93,7 @@
 > 
 > **Required channel permission**: `read_channel_permission`
 
-### **GET** `/send_message`
+### **GET** `/message/send`
 
 > **Parameters**:
 > * `channel_id` (_required_)

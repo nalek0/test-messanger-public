@@ -8,13 +8,7 @@ user_api = Blueprint("user_api", __name__,
                      url_prefix="/user")
 
 
-@user_api.route("/get_client_user", methods=["GET"])
-@login_required
-def get_client():
-    return current_user.private_json()
-
-
-@user_api.route("/get_user", methods=["GET"])
+@user_api.route("/get", methods=["GET"])
 def get_user():
     user_id = request.args["user_id"]
     user = User.query.get(user_id)
@@ -24,7 +18,13 @@ def get_user():
         raise APINotFound(f"User with given ({user_id}) is not found!")
 
 
-@user_api.route("/update_profile", methods=["POST"])
+@user_api.route("/client/get", methods=["GET"])
+@login_required
+def get_client():
+    return current_user.private_json()
+
+
+@user_api.route("/client/update", methods=["POST"])
 @login_required
 def update_profile():
     if request.json.get("first_name") is not None:
@@ -47,7 +47,7 @@ def update_profile():
     return {"description": "OK"}
 
 
-@user_api.route("/add_friend", methods=["POST"])
+@user_api.route("/client/friend/add", methods=["POST"])
 @login_required
 def add_friend():
     user_id = request.json["user_id"]
@@ -65,7 +65,7 @@ def add_friend():
         return {"description": "This user is already friend"}
 
 
-@user_api.route("/remove_friend", methods=["POST"])
+@user_api.route("/client/friend/remove", methods=["POST"])
 @login_required
 def remove_friend():
     user_id = request.json["user_id"]
