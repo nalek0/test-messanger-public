@@ -60,6 +60,17 @@
 > 
 > **Required channel permission**: `edit_channel_permission`
 
+### **POST** `/create`
+
+> **Parameters**:
+> * `title` (_required_)
+> * `description` (_not required, default=""_)
+> * `companions` (_not required, default=[]_)
+> 
+> **Login required**: _True_
+> 
+> **Required channel permission**: `edit_channel_permission`
+
 ### **GET** `/member/get`
 
 > **Parameters**:

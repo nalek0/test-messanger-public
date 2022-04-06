@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 from werkzeug import exceptions
 
 from api_exceptions import *
-from database import User, db, Channel, Message, ChannelMember, ChannelInvitation
+from database import User, db, Channel, Message, ChannelMember, ChannelInvitation, ChannelFabric
 from server.serializable import Serializable, serialize_list
 from server_sockets import socketio
 
@@ -53,6 +53,23 @@ def update_channel():
     channel.updated()
 
     return {"description": "OK"}
+
+
+@channel_api.route("/create", methods=["POST"])
+@login_required
+def create_channel():
+    title = request.json["title"]
+    description = request.json.get("description", "")
+    companions = request.json.get("companions", [])
+
+    other_users = list(map(
+        lambda companion_id: User.query.get(companion_id),
+        companions
+    ))
+    if any(map(lambda el: el is None, other_users)):
+        raise APIBadRequest("Not all companions exists")
+
+    return ChannelFabric(title, description, other_users, current_user).make().public_json()
 
 
 @channel_api.route("/member/get", methods=["GET"])
