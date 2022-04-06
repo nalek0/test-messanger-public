@@ -3,6 +3,7 @@ from werkzeug.exceptions import BadRequestKeyError, Unauthorized
 
 from api_channel import channel_api
 from api_exceptions import APIException, APIBadRequest, APIUnauthorized
+from api_invitation import invitation_api
 from api_user import user_api
 
 api = Blueprint("api", __name__,
@@ -28,3 +29,4 @@ def invalid_api_usage(exception: APIException):
 
 api.register_blueprint(user_api)
 api.register_blueprint(channel_api)
+api.register_blueprint(invitation_api)

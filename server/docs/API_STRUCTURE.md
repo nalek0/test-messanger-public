@@ -60,22 +60,6 @@
 > 
 > **Required channel permission**: `edit_channel_permission`
 
-### **POST** `/delete_invitation`
-
-> **Parameters**:
-> * `invitation_id` (_required_)
-> 
-> **Login required**: _True_
-
-### **POST** `/use_invitation`
-
-> **Parameters**:
-> * `invitation_id` (_required_)
-> 
-> **Login required**: _True_
-
-
-
 ### **GET** `/get_member`
 
 > **Parameters**:
@@ -118,3 +102,19 @@
 > **Login required**: _True_
 > 
 > **Required channel permission**: `send_messages_permission`
+
+## Invitation API (`/api/invitation`)
+
+### **POST** `/delete`
+
+> **Parameters**:
+> * `invitation_id` (_required_)
+> 
+> **Login required**: _True_
+
+### **POST** `/use`
+
+> **Parameters**:
+> * `invitation_id` (_required_)
+> 
+> **Login required**: _True_
