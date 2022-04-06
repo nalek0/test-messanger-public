@@ -33,14 +33,14 @@ def create_app():
     @app.errorhandler(exceptions.NotFound.code)
     def notfound_errorhandler(error):
         if request.path.startswith("/api"):
-            return error, exceptions.NotFound.code
+            return error, error.code
         else:
             return render_base_template("404.html"), exceptions.NotFound.code
 
     @app.errorhandler(exceptions.Unauthorized.code)
     def unauthorized_errorhandler(error):
         if request.path.startswith("/api"):
-            return error, exceptions.Unauthorized.code
+            return error, error.code
         else:
             return redirect(url_for("auth.signup_get", errors=["You are not login yet"]))
 
