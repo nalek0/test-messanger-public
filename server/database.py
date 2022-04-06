@@ -145,7 +145,7 @@ class Channel(db.Model, Serializable):
     def personal_private_room(self) -> str:
         return f"personal_channel_private_room_{self.id}"
 
-    def get_member(self, user: User) -> Optional[User]:
+    def get_member(self, user: User):
         results = list(filter(
             lambda mem: mem.user.id == user.id,
             self.members
