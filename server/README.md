@@ -18,6 +18,6 @@ port = ...
 debug = ...
 ```
 
-## [Структура базы данных здесь](./DATABASE_STRUCTURE.md)
+## [Структура базы данных здесь](./docs/DATABASE_STRUCTURE.md)
 
-## [Структура API здесь](./API_STRUCTURE.md):
+## [Структура API здесь](./docs/API_STRUCTURE.md):
