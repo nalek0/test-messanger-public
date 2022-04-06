@@ -89,6 +89,7 @@ class User(UserMixin, db.Model, Serializable):
             "last_name": self.last_name,
             "username": self.username,
             "description": self.description,
+            "profile_url": self.profile_url,
             "channels": serialize_list(self.channels),
             "friends": serialize_list(self.friends)
         }
