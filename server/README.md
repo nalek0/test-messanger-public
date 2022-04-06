@@ -85,3 +85,44 @@ debug = ...
 * `datetime`: DateTime
 * `channel`: Channel
 * `author`: [User](#user)
+
+## Структура API:
+
+### User API (`/api/user`)
+
+#### *GET* `/get_client_user`
+
+> *Parameters*: Нет
+> 
+> *Login required*: _True_
+
+#### *GET* `/get_user`
+
+> *Parameters*:
+> * `user_id` (_required_)
+> 
+> *Login required*: _False_
+
+#### *POST* `/update_profile`
+
+> *Parameters*:
+> * `first_name` (_not required, not blank_)
+> * `last_name` (_not required, not blank_)
+> * `description` (_not required, may be blank_)
+> 
+> *Login required*: _True_
+
+#### *POST* add_friend
+
+> *Parameters*:
+> * `user_id` (_required_)
+> 
+> *Login required*: _True_
+
+#### *POST* `/remove_friend`
+
+> *Parameters*:
+> * `user_id` (_required_)
+> 
+> *Login required*: _True_
+
