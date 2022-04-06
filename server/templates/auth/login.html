@@ -8,15 +8,19 @@
     <link rel="stylesheet" href="{{ url_for('auth.static', filename='auth.css') }}">
 {% endblock %}
 
+{% block top_scripts %}
+    <script type="text/javascript" src="{{ url_for('auth.static', filename='login.js') }}"></script>
+{% endblock %}
+
 {% block content %}
     <div class="auth-form">
-        <form method="post" class="base_form centered_form centered_content">
+        <form class="base_form centered_form centered_content">
             <input type="text" name="username" placeholder="Username" class="base_input base_text_input" /> 
             <input type="password" name="password" placeholder="Password" class="base_input base_text_input" /> 
-            <input type="submit" value="Submit" class="base_input base_submit_input" /> 
+            <div class="base_input base_submit_input" onclick="login(this)">Submit</div>
 
             <div>
-                <a href="{{ url_for('auth.signup_get') }}" class="link">Make a new account</a>
+                <a href="{{ url_for('auth.signup_page') }}" class="link">Make a new account</a>
             </div>
         </form>
     </div>

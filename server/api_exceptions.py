@@ -32,7 +32,7 @@ class APIUnauthorized(APIException):
 
 
 class APIForbidden(APIException):
-    status_code = 402
+    status_code = 403
 
 
 class APINotFound(APIException):

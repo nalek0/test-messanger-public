@@ -1,23 +1,20 @@
-form.base_form {
+.base_form {
     width: 50%;
     padding: 1rem;
     border: 0.1rem solid var(--accent-color);
     border-radius: 1rem;
 }
 
-form.centered_form {
+.centered_form {
     margin-left: auto;
     margin-right: auto;
 }
 
-form.centered_content {
+.centered_content {
     text-align: center;
 }
 
-textarea,
-input[type=text].base_input,
-input[type=password].base_input,
-input[type=submit].base_input {
+.base_input {
     padding: 0.5rem;
     background: var(--accent-color);
     border-radius: 0.25rem;
@@ -27,7 +24,7 @@ input[type=submit].base_input {
     margin: 0.25rem;
 }
 
-textarea.base_textarea {
+.base_textarea {
     display: block;
     box-sizing: border-box;
     width: 100%;
@@ -35,26 +32,26 @@ textarea.base_textarea {
     resize: none;
 }
 
-input.base_text_input {
+.base_text_input {
     display: block;
     box-sizing: border-box;
     width: 100%;
 }
 
-input.base_submit_input {
+.base_submit_input {
     display: inline-block;
     cursor: pointer;
     margin-left: auto;
     margin-right: auto;
 }
-input.base_submit_input:hover {
+.base_submit_input:hover {
     background: var(--lighten-accent-color);
 }
-input.base_submit_input:active {
+.base_submit_input:active {
     background: var(--darken-accent-color);
 }
 
-input.base_checkbox_input {
+.base_checkbox_input {
     appearance: none;
     width: 0.75em;
     height: 0.75em;
@@ -66,6 +63,6 @@ input.base_checkbox_input {
 
     margin: 0;
 }
-input.base_checkbox_input:checked {
+.base_checkbox_input:checked {
     background: var(--accent-color);
 }

@@ -19,12 +19,12 @@ def load_user(user_id: int):
 
 
 @auth.route("/signup")
-def signup_get():
+def signup_page():
     return render_base_template("signup.html")
 
 
 @auth.route("/login")
-def login_get():
+def login_page():
     return render_base_template("login.html")
 
 

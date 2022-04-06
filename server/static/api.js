@@ -177,6 +177,30 @@ class Client extends User {
 		);
 	}
 
+	static signup(first_name, last_name, username, password) {
+		return makeRequest(
+			"POST",
+			"/api/user/client/signup",
+			{ 
+				"first_name": first_name,
+				"last_name": last_name,
+				"username": username,
+				"password": password
+			}
+		).then( response => new Client(JSON.parse(response)) );
+	}
+
+	static login(username, password) {
+		return makeRequest(
+			"POST",
+			"/api/user/client/login",
+			{ 
+				"username": username,
+				"password": password
+			}
+		).then( response => new Client(JSON.parse(response)) );
+	}
+
 	static getClient() {
 		return makeRequest(
 			"POST",
@@ -208,75 +232,75 @@ class Message {
 	}
 }
 
-class MessagePage {
-	constructor(data) {
-		this.page 		= data.page;
-		this.messages 	= data.messages;
-	}	
-}
+// class MessagePage {
+// 	constructor(data) {
+// 		this.page 		= data.page;
+// 		this.messages 	= data.messages;
+// 	}	
+// }
 
-class MessageList {
-	_loading = false;
+// class MessageList {
+// 	_loading = false;
 
-	isShouldLoadPreviousPage() {
-		return !this._loading && this.pages[0].page !== 0;
-	}
+// 	isShouldLoadPreviousPage() {
+// 		return !this._loading && this.pages[0].page !== 0;
+// 	}
 
-	async loadPreviousPage() {
-		if (this.isShouldLoadPreviousPage()) {
-			this._loading = true;
+// 	async loadPreviousPage() {
+// 		if (this.isShouldLoadPreviousPage()) {
+// 			this._loading = true;
 
-			let messagePageData = await makeRequest(
-				"POST", 
-				"/api/channel/load_messages", 
-				{ 
-					"channel_id": CHANNEL_ID, 
-					"page": this.pages[0].page - 1
-				}
-			);
-			let messageList = new MessageList(JSON.parse(messagePageData)["data"]);
-			this.pages.splice(0, 0, ...messageList.pages);
+// 			let messagePageData = await makeRequest(
+// 				"POST", 
+// 				"/api/channel/load_messages", 
+// 				{ 
+// 					"channel_id": CHANNEL_ID, 
+// 					"page": this.pages[0].page - 1
+// 				}
+// 			);
+// 			let messageList = new MessageList(JSON.parse(messagePageData)["data"]);
+// 			this.pages.splice(0, 0, ...messageList.pages);
 			
-			this._loading = false;
+// 			this._loading = false;
 
-			return messageList;
-		}
-		else
-			return null;
-	}
+// 			return messageList;
+// 		}
+// 		else
+// 			return null;
+// 	}
 
-	sendMessage(text) {
-		let messageData = {
-			"channel_id": this.channel.id,
-			"text": text
-		};
-		return makeRequest(
-			"POST",
-			"/api/channel/send_message",
-			messageData
-		).then(value => new Message(JSON.parse(value)["data"]));
-	}
+// 	sendMessage(text) {
+// 		let messageData = {
+// 			"channel_id": this.channel.id,
+// 			"text": text
+// 		};
+// 		return makeRequest(
+// 			"POST",
+// 			"/api/channel/send_message",
+// 			messageData
+// 		).then(value => new Message(JSON.parse(value)["data"]));
+// 	}
 
-	constructor(data) {
-		this.pages = [];
-		for (let pageData of data.pages)
-			this.pages.push(new MessagePage(pageData));
-		this.channel = new Channel(data.channel);
-	}
+// 	constructor(data) {
+// 		this.pages = [];
+// 		for (let pageData of data.pages)
+// 			this.pages.push(new MessagePage(pageData));
+// 		this.channel = new Channel(data.channel);
+// 	}
 
-	static loadMessages() {
-		let requestPromise = makeRequest(
-			"POST", 
-			"/api/channel/load_messages", 
-			{ "channel_id": CHANNEL_ID }
-		);
+// 	static loadMessages() {
+// 		let requestPromise = makeRequest(
+// 			"POST", 
+// 			"/api/channel/load_messages", 
+// 			{ "channel_id": CHANNEL_ID }
+// 		);
 
-	    return requestPromise.then(value => {
-			let data = JSON.parse(value)["data"];
-			return new MessageList(data);
-		});
-	}
-}
+// 	    return requestPromise.then(value => {
+// 			let data = JSON.parse(value)["data"];
+// 			return new MessageList(data);
+// 		});
+// 	}
+// }
 
 function makeRequest(method, url, data = {}) {
     return new Promise((resolve, reject) => {
@@ -290,16 +314,13 @@ function makeRequest(method, url, data = {}) {
             } else {
                 reject({
                     status: this.status,
-                    statusText: xhr.statusText
+                    response: JSON.parse(this.response)
                 });
             }
         };
 
         xhr.onerror = function () {
-            reject({
-                status: this.status,
-                statusText: xhr.statusText
-            });
+            reject({ status: this.status });
         };
         
         xhr.send(JSON.stringify(data));

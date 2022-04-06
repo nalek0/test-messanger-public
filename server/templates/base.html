@@ -30,7 +30,7 @@
             </div>
             <div class="top_part">
                 {% if client_user.is_anonymous %}
-                    <span class="top_link small"><a href="{{ url_for('auth.signup_get') }}" class="link">Sign up</a></span>
+                    <span class="top_link small"><a href="{{ url_for('auth.signup_page') }}" class="link">Sign up</a></span>
                 {% else %}
                     <span class="top_link small"><a href="{{ url_for('auth.logout') }}" class="link">Log out</a></span>
                 {% endif %}
