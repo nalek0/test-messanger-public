@@ -14,7 +14,7 @@
 
 {% block main_content %}
     <div class="main_part">
-        <div class="profile">
+        <form class="profile">
             <div class="label">First name:</div>
             <input type="text"
                    name="first_name"
@@ -47,7 +47,7 @@
                        onclick="delete_invitation({{ invitation.id }})">
             </div>
             {% endfor %}
-            <input type="submit" value="Send changes" class="base_input base_submit_input" onclick="update_profile(this)">
-        </div>
+            <div class="base_input base_submit_input" onclick="update_profile(this)">Send changes</div>
+        </form>
     </div>
 {% endblock %}

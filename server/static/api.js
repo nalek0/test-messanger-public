@@ -186,6 +186,17 @@ class Client extends User {
 		);
 	}
 
+	update() {
+		return makeAPIRequest(
+			"/api/user/client/update",
+			{
+				"first_name": this.first_name,
+				"last_name": this.last_name,
+				"description": this.description
+			}
+		);
+	}
+
 	static signup(first_name, last_name, username, password) {
 		return makeAPIRequest(
 			"/api/user/client/signup",
@@ -217,17 +228,6 @@ class Client extends User {
 			else
 				return new Client(JSON.parse(response));
 		});
-	}
-
-	static updateClientData(data) {
-		return makeAPIRequest(
-			"/api/user/client/update",
-			{
-				"first_name": this.first_name,
-				"last_name": this.last_name,
-				"description": this.description
-			}
-		);
 	}
 }
 

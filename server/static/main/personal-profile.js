@@ -1,10 +1,18 @@
+var client;
+
+( async () => client = await Client.getClient() )();
+
 async function update_profile(button) {
-	let data = {}
-	Array.from(button.parentNode.childNodes)
-			.filter( node => node.tagName && ((node.tagName.toLowerCase() === "input" && node.getAttribute("type") === "text") || node.tagName.toLowerCase() === "textarea")  )
-			.forEach( node => data[node.getAttribute("name")] = node.value )
+	if (!client)
+		return;
+	let formData = new FormData(button.parentNode);
+
+	client.first_name = formData.get("first_name");
+	client.last_name = formData.get("last_name");
+	client.description = formData.get("description");
+
 	try {
-		await Client.updateClientData(data);
+		await client.update();
 		pushMessagesList.addMessage(new PushMessage("Saved", "ok_message"));
 	} catch (error) {
 		if (error.status === 400 || error.status === 404)
