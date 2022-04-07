@@ -1,3 +1,42 @@
+class MessageList {
+	_loading = false;
+
+	isShouldLoadPreviousPage() {
+		return !this._loading && this.pages[0].page !== 0;
+	}
+
+	async loadPreviousPage() {
+		if (this.isShouldLoadPreviousPage()) {
+			this._loading = true;
+
+			let page = this.pages[0].page;
+			let messages = Message.fetchMessages(CHANNEL_ID, page);
+			let messageList = new MessageList(page, messages);
+			this.pages.splice(0, 0, ...messageList.pages);
+			
+			this._loading = false;
+
+			return messageList;
+		}
+		else
+			return null;
+	}
+
+	sendMessage(text) {
+		return Message.sendMessage(CHANNEL_ID, text);
+	}
+
+	constructor(lastMessagePage) {
+		this.pages = [lastMessagePage];
+		this.channel = new Channel(lastMessagePage.channel);
+	}
+
+	static loadLastMessages() {
+		return Message.fetchMessages(CHANNEL_ID)
+			.then( messagePage => new MessageList(messagePage) );
+	}
+}
+
 var messageList = null;
 let messagesWindow = null;
 
@@ -55,8 +94,8 @@ function showMessagesAppend(messages) {
 		scrollDown();
 }
 
-async function loadMessages() {
-	messageList = await MessageList.loadMessages();
+async function loadLastMessages() {
+	messageList = await MessageList.loadLastMessages();
 	showMessagesPrepend(messageList.pages.flatMap( page => page.messages ));
 }
 
@@ -71,6 +110,6 @@ async function messagesOnScrollEvent() {
 window.onload = async () => {
 	messagesWindow = document.getElementById("messages_window");
 	messagesWindow.onscroll = messagesOnScrollEvent;
-	await loadMessages();
+	await loadLastMessages();
 	scrollDown();
 };

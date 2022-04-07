@@ -148,7 +148,7 @@ _True_
 #### Parameters:
 
 * `channel_id` (_required_)
-* `page` (_not required, >= 0, default=0_)
+* `page` (_not required, >= 0, default=`last_page`_)
 * `page_results` (_not required, 0, <= 50, default=20_)
 
 #### Login required:

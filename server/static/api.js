@@ -231,6 +231,14 @@ class Client extends User {
 	}
 }
 
+class MessagePage {
+	constructor(data) {
+		this.page 		= data.page;
+		this.channel 	= new Channel(data.channel);
+		this.messages 	= data.messages.map ( messageJson => new Message(messageJson) );
+	}	
+}
+
 class Message {
 	constructor(data) {
         this.id = data.id;
@@ -239,74 +247,31 @@ class Message {
         this.channel 	= new Channel(data.channel);
         this.author 	= new User(data.author);
 	}
+
+	static fetchMessages(channel_id, page=null, page_results=20) {
+		let fetchData = {
+			"channel_id": CHANNEL_ID, 
+			"page_results": page_results
+		}
+		if (page != null)
+			fetchData.page = page;
+
+		return makeAPIRequest(
+			"/api/channel/message/fetch", 
+			fetchData
+		).then( response => new MessagePage(JSON.parse(response)) );
+	}
+
+	static sendMessage(channel_id, text) {
+		return makeAPIRequest(
+			"/api/channel/message/send",
+			{
+				"channel_id": channel_id,
+				"text": text
+			}
+		).then( response => new Message(JSON.parse(response)) );
+	}
 }
-
-// class MessagePage {
-// 	constructor(data) {
-// 		this.page 		= data.page;
-// 		this.messages 	= data.messages;
-// 	}	
-// }
-
-// class MessageList {
-// 	_loading = false;
-
-// 	isShouldLoadPreviousPage() {
-// 		return !this._loading && this.pages[0].page !== 0;
-// 	}
-
-// 	async loadPreviousPage() {
-// 		if (this.isShouldLoadPreviousPage()) {
-// 			this._loading = true;
-
-// 			let messagePageData = await makeAPIRequest(
-// 				"/api/channel/load_messages", 
-// 				{ 
-// 					"channel_id": CHANNEL_ID, 
-// 					"page": this.pages[0].page - 1
-// 				}
-// 			);
-// 			let messageList = new MessageList(JSON.parse(messagePageData)["data"]);
-// 			this.pages.splice(0, 0, ...messageList.pages);
-			
-// 			this._loading = false;
-
-// 			return messageList;
-// 		}
-// 		else
-// 			return null;
-// 	}
-
-// 	sendMessage(text) {
-// 		let messageData = {
-// 			"channel_id": this.channel.id,
-// 			"text": text
-// 		};
-// 		return makeAPIRequest(
-// 			"/api/channel/send_message",
-// 			messageData
-// 		).then(value => new Message(JSON.parse(value)["data"]));
-// 	}
-
-// 	constructor(data) {
-// 		this.pages = [];
-// 		for (let pageData of data.pages)
-// 			this.pages.push(new MessagePage(pageData));
-// 		this.channel = new Channel(data.channel);
-// 	}
-
-// 	static loadMessages() {
-// 		let requestPromise = makeAPIRequest(
-// 			"/api/channel/load_messages", 
-// 			{ "channel_id": CHANNEL_ID }
-// 		);
-
-// 	    return requestPromise.then(value => {
-// 			let data = JSON.parse(value)["data"];
-// 			return new MessageList(data);
-// 		});
-// 	}
-// }
 
 function makeAPIRequest(url, data = {}) {
     return new Promise((resolve, reject) => {

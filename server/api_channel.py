@@ -133,6 +133,20 @@ def fetch_members():
     return {"data": serialize_list(results_on_page)}
 
 
+class MessagePage(Serializable):
+    def __init__(self, page: int, channel: Channel, messages: List[Message]):
+        self.page = page
+        self.channel = channel
+        self.messages = messages
+
+    def public_json(self) -> dict:
+        return {
+            "page": self.page,
+            "channel": self.channel.public_json(),
+            "messages": serialize_list(self.messages)
+        }
+
+
 @channel_api.route("/message/fetch", methods=["POST"])
 @login_required
 def fetch_messages():
@@ -143,18 +157,21 @@ def fetch_messages():
     if not current_channel.get_member(current_user).has_permission("read_channel_permission"):
         raise APIDoNotHavePermission("read_channel_permission")
 
-    page = request.json.get("page") or 0
-    page_results = request.json.get("page_results") or 20
-    if page is not int or page < 0:
+    def last_page(pres: int) -> int:
+        return current_channel.messages.count() // pres
+
+    page_results = request.json.get("page_results", 20)
+    page = request.json.get("page", last_page(page_results))
+    if page < 0:
         raise APIBadRequest("Wrong page parameter")
-    if page_results is not int or page_results <= 0 or page_results > 50:
+    if page_results <= 0 or page_results > 50:
         raise APIBadRequest("Wrong page_results parameter")
 
-    messages_query = current_channel.messages.query
+    messages_query = current_channel.messages
     messages_query.limit(page_results)
     messages_query.offset(page * page_results)
 
-    return {"data": serialize_list(messages_query.all())}
+    return MessagePage(page, current_channel, messages_query.all()).public_json()
 
 
 @channel_api.route("/message/send", methods=["POST"])
@@ -183,4 +200,4 @@ def send_message():
 
     socketio.emit("channel_message", new_message.public_json(), room=new_message.channel.room_id)
 
-    return {"data": new_message.public_json()}
+    return new_message.public_json()
