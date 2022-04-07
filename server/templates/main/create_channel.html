@@ -1,7 +1,7 @@
 {% extends 'main_base.html' %}
 
 {% block top_stylesheets %}
-    <link rel="stylesheet" href="{{ url_for('messanger.static', filename='channels.css') }}">
+    <link rel="stylesheet" href="{{ url_for('main.static', filename='channels.css') }}">
 {% endblock %}
 
 {% block title %}
@@ -12,7 +12,7 @@
     <div class="main_part">
         {% if client_user.friends|length %}
             <div class="create_channel_form">
-                <form action="{{ url_for('messanger.create_channel') }}" method="post"
+                <form action="{{ url_for('main.create_channel') }}" method="post"
                       class="centered_form">
                     <div class="label">Title:</div>
                     <input type="text"

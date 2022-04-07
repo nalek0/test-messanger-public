@@ -1,7 +1,7 @@
 {% extends 'main_base.html' %}
 
 {% block top_stylesheets %}
-    <link rel="stylesheet" href="{{ url_for('messanger.static', filename='channels.css') }}">
+    <link rel="stylesheet" href="{{ url_for('main.static', filename='channels.css') }}">
 {% endblock %}
 
 {% block title %}
@@ -26,10 +26,10 @@
         {% endif %}
 
         {% if page > 0 %}
-            <a href="{{ url_for('messanger.channels', page=(page - 1)) }}" class="link">Previous page</a>
+            <a href="{{ url_for('main.channels', page=(page - 1)) }}" class="link">Previous page</a>
         {% endif %}
         {% if page < (number_of_pages - 1) %}
-            <a href="{{ url_for('messanger.channels', page=(page + 1)) }}" class="link">Next page</a>
+            <a href="{{ url_for('main.channels', page=(page + 1)) }}" class="link">Next page</a>
         {% endif %}
     </div>
 {% endblock %}
