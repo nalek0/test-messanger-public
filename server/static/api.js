@@ -120,6 +120,17 @@ class Channel {
 		).then( response => new ChannelMember(JSON.parse(response)) );
 	}
 
+	static createChannel(title, description, companions) {
+		return makeAPIRequest(
+			"/api/channel/create",
+			{
+				"title": title,
+				"description": description,
+				"companions": companions
+			}
+		).then ( response => new Channel(JSON.parse(response)) )
+	}
+
 	static getChannel(channel_id) {
 		return makeAPIRequest(
 			"/api/channel/get",
