@@ -18,10 +18,10 @@ class APIDoNotHavePermission(APIForbidden):
         super().__init__(f"You do not have '{permission}' permission")
 
 
-@channel_api.route("/get", methods=["GET"])
+@channel_api.route("/get", methods=["POST"])
 @login_required
 def get_channel():
-    channel_id = request.args["channel_id"]
+    channel_id = request.json["channel_id"]
     current_channel = Channel.query.get(channel_id)
     if current_channel is None:
         raise APINotFound(f"Channel with {channel_id} id is not found")
@@ -72,11 +72,11 @@ def create_channel():
     return ChannelFabric(title, description, other_users, current_user).make().public_json()
 
 
-@channel_api.route("/member/get", methods=["GET"])
+@channel_api.route("/member/get", methods=["POST"])
 @login_required
 def get_member():
-    channel_id = request.args["channel_id"]
-    user_id = request.args["user_id"]
+    channel_id = request.json["channel_id"]
+    user_id = request.json["user_id"]
 
     current_channel = Channel.query.get(channel_id)
     if current_channel is None:
@@ -96,7 +96,7 @@ def get_member():
             return member.public_json()
 
 
-@channel_api.route("/member/fetch", methods=["GET"])
+@channel_api.route("/member/fetch", methods=["POST"])
 @login_required
 def fetch_members():
     channel_id = request.json["channel_id"]
@@ -133,10 +133,10 @@ def fetch_members():
     return {"data": serialize_list(results_on_page)}
 
 
-@channel_api.route("/message/fetch", methods=["GET"])
+@channel_api.route("/message/fetch", methods=["POST"])
 @login_required
 def fetch_messages():
-    channel_id = request.args["channel_id"]
+    channel_id = request.json["channel_id"]
     current_channel = Channel.query.get(channel_id)
     if current_channel is None:
         raise APINotFound(f"Channel with {channel_id} id is not found")

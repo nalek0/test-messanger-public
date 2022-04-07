@@ -21,9 +21,8 @@ class User {
 	}
 
 	static getUser(user_id) {
-		return makeRequest(
-			"POST",
-			"/api/user/get_user",
+		return makeAPIRequest(
+			"/api/user/get",
 			{ "user_id": user_id }
 		).then(response => new User(JSON.parse(response)));
 	}
@@ -71,29 +70,32 @@ class Channel {
 		this.roles 			= data.roles.map( it => new ChannelRole(it) );
 	}
 
-	updateChannelData(data) {
-		return makeRequest(
-			"POST",
-			"/api/channel/update_channel",
-			data
+	updateChannelData() {
+		return makeAPIRequest(
+			"/api/channel/update",
+			{
+				"channel_id": this.id,
+				"title": this.title,
+				"description": this.description
+			}
 		);
 	}
 
-	async getModerators() {
-		return makeRequest(
-			"POST",
-			"/api/channel/fetch_members",
+	async getModerators(page=0, page_results=20) {
+		return makeAPIRequest(
+			"/api/channel/member/fetch",
 			{ 
 				"channel_id": this.id,
-				"permissions": ["edit_channel_permission"]
+				"permissions": ["edit_channel_permission"],
+				"page": page,
+				"page_results": page_results
 			}
 		).then( response => JSON.parse(response)['data'].map ( it => new ChannelMember(it) ) );
 	}
 
-	async getMembers() {
-		return makeRequest(
-			"POST",
-			"/api/channel/fetch_members",
+	async getMembers(page=0, page_results=20) {
+		return makeAPIRequest(
+			"/api/channel/member/fetch",
 			{ 
 				"channel_id": this.id,
 				"permissions": [
@@ -101,15 +103,16 @@ class Channel {
 					"watch_channel_members_permission", 
 					"read_channel_permission", 
 					"send_messages_permission"
-				]
+				],
+				"page": page,
+				"page_results": page_results
 			}
 		).then( response => JSON.parse(response)['data'].map ( it => new ChannelMember(it) ) );
 	}
 
 	getMember(user) {
-		return makeRequest(
-			"POST",
-			"/api/channel/get_member",
+		return makeAPIRequest(
+			"/api/channel/member/get",
 			{ 
 				"channel_id": this.id, 
 				"user_id": user.id 
@@ -118,9 +121,8 @@ class Channel {
 	}
 
 	static getChannel(channel_id) {
-		return makeRequest(
-			"POST",
-			"/api/channel/get_channel",
+		return makeAPIRequest(
+			"/api/channel/get",
 			{ "channel_id": channel_id }
 		).then( response => new Channel(JSON.parse(response)) );
 	}
@@ -134,17 +136,15 @@ class ChannelInvitation {
 	}
 
 	static useInvitation(invitation_id) {
-		return makeRequest(
-			"POST",
-			"/api/channel/use_invitation",
+		return makeAPIRequest(
+			"/api/channel/invitation/use",
 			{ "invitation_id": invitation_id }
 		);
 	}
 
 	static deleteInvitation(invitation_id) {
-		return makeRequest(
-			"POST",
-			"/api/channel/delete_invitation",
+		return makeAPIRequest(
+			"/api/channel/invitation/delete",
 			{ "invitation_id": invitation_id }
 		);
 	}
@@ -162,24 +162,21 @@ class Client extends User {
 	}
 
 	addFriend(user) {
-		return makeRequest(
-			"POST",
-			"/api/user/add_friend",
+		return makeAPIRequest(
+			"/api/user/client/friend/add",
 			{ "user_id": user.id }
 		);
 	}
 
 	removeFriend(user) {
-		return makeRequest(
-			"POST",
-			"/api/user/remove_friend",
+		return makeAPIRequest(
+			"/api/user/client/friend/remove",
 			{ "user_id": user.id }
 		);
 	}
 
 	static signup(first_name, last_name, username, password) {
-		return makeRequest(
-			"POST",
+		return makeAPIRequest(
 			"/api/user/client/signup",
 			{ 
 				"first_name": first_name,
@@ -191,8 +188,7 @@ class Client extends User {
 	}
 
 	static login(username, password) {
-		return makeRequest(
-			"POST",
+		return makeAPIRequest(
 			"/api/user/client/login",
 			{ 
 				"username": username,
@@ -202,9 +198,8 @@ class Client extends User {
 	}
 
 	static getClient() {
-		return makeRequest(
-			"POST",
-			"/api/user/get_client_user"
+		return makeAPIRequest(
+			"/api/user/client/get"
 		).then(response => {
 			if (response === null)
 				return null;
@@ -214,10 +209,13 @@ class Client extends User {
 	}
 
 	static updateClientData(data) {
-		return makeRequest(
-			"POST",
-			"/api/user/update_profile",
-			data
+		return makeAPIRequest(
+			"/api/user/client/update",
+			{
+				"first_name": this.first_name,
+				"last_name": this.last_name,
+				"description": this.description
+			}
 		);
 	}
 }
@@ -250,8 +248,7 @@ class Message {
 // 		if (this.isShouldLoadPreviousPage()) {
 // 			this._loading = true;
 
-// 			let messagePageData = await makeRequest(
-// 				"POST", 
+// 			let messagePageData = await makeAPIRequest(
 // 				"/api/channel/load_messages", 
 // 				{ 
 // 					"channel_id": CHANNEL_ID, 
@@ -274,8 +271,7 @@ class Message {
 // 			"channel_id": this.channel.id,
 // 			"text": text
 // 		};
-// 		return makeRequest(
-// 			"POST",
+// 		return makeAPIRequest(
 // 			"/api/channel/send_message",
 // 			messageData
 // 		).then(value => new Message(JSON.parse(value)["data"]));
@@ -289,8 +285,7 @@ class Message {
 // 	}
 
 // 	static loadMessages() {
-// 		let requestPromise = makeRequest(
-// 			"POST", 
+// 		let requestPromise = makeAPIRequest(
 // 			"/api/channel/load_messages", 
 // 			{ "channel_id": CHANNEL_ID }
 // 		);
@@ -302,11 +297,11 @@ class Message {
 // 	}
 // }
 
-function makeRequest(method, url, data = {}) {
+function makeAPIRequest(url, data = {}) {
     return new Promise((resolve, reject) => {
         let xhr = new XMLHttpRequest();
-        xhr.open(method, url);
-		xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+        xhr.open("POST", url);
+    	xhr.setRequestHeader("Content-Type", "application/json");
         
         xhr.onload = function () {
             if (this.status >= 200 && this.status < 300) {

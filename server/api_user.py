@@ -1,4 +1,5 @@
 import hashlib
+import json
 
 from flask import Blueprint, request
 from flask_login import login_required, current_user, login_user, logout_user
@@ -10,9 +11,12 @@ user_api = Blueprint("user_api", __name__,
                      url_prefix="/user")
 
 
-@user_api.route("/get", methods=["GET"])
+@user_api.route("/get", methods=["POST"])
 def get_user():
-    user_id = request.args["user_id"]
+    print(request.data)
+    dt = json.loads(request.data)
+    print(dt)
+    user_id = dt["user_id"]
     user = User.query.get(user_id)
     if user is not None:
         return user.public_json()
@@ -71,7 +75,7 @@ def logout():
     return {"description": "OK"}
 
 
-@user_api.route("/client/get", methods=["GET"])
+@user_api.route("/client/get", methods=["POST"])
 @login_required
 def get_client():
     return current_user.private_json()

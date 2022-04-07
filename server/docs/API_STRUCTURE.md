@@ -2,7 +2,7 @@
 
 ## User API (`/api/user`)
 
-### **GET** `/get`
+### **[POST]** `/get`
 
 #### Parameters:
 
@@ -11,7 +11,7 @@
 #### Login required:
 _False_
 
-### **GET** `/client/get`
+### **[POST]** `/client/get`
 
 #### Parameters:
 No
@@ -19,7 +19,7 @@ No
 #### Login required:
 _True_
 
-### **POST** `/client/signup`
+### **[POST]** `/client/signup`
 
 #### Parameters:
 
@@ -31,7 +31,7 @@ _True_
 #### Login required:
 _False_
 
-### **POST** `/client/login`
+### **[POST]** `/client/login`
 
 #### Parameters:
 
@@ -41,7 +41,7 @@ _False_
 #### Login required:
 _False_
 
-### **POST** `/client/logout`
+### **[POST]** `/client/logout`
 
 #### Parameters:
 No
@@ -49,7 +49,7 @@ No
 #### Login required:
 _True_
 
-### **POST** `/client/update`
+### **[POST]** `/client/update`
 
 #### Parameters:
 
@@ -60,7 +60,7 @@ _True_
 #### Login required:
 _True_
 
-### **POST** `/client/friend/add`
+### **[POST]** `/client/friend/add`
 
 #### Parameters:
 
@@ -69,7 +69,7 @@ _True_
 #### Login required:
 _True_
 
-### **POST** `/client/friend/remove`
+### **[POST]** `/client/friend/remove`
 
 #### Parameters:
 
@@ -80,7 +80,7 @@ _True_
 
 ## Channel API (`/api/channel`)
 
-### **GET** `/get`
+### **[POST]** `/get`
 
 #### Parameters:
 
@@ -91,7 +91,7 @@ _True_
 
 **Required channel permission**: `watch_channel_information_permission`
 
-### **POST** `/update`
+### **[POST]** `/update`
 
 #### Parameters:
 
@@ -104,7 +104,7 @@ _True_
 
 **Required channel permission**: `edit_channel_permission`
 
-### **POST** `/create`
+### **[POST]** `/create`
 
 #### Parameters:
 
@@ -117,7 +117,7 @@ _True_
 
 **Required channel permission**: `edit_channel_permission`
 
-### **GET** `/member/get`
+### **[POST]** `/member/get`
 
 #### Parameters:
 
@@ -129,7 +129,7 @@ _True_
 
 **Required channel permission**: `watch_channel_members_permission`
 
-### **GET** `/member/fetch`
+### **[POST]** `/member/fetch`
 
 #### Parameters:
 
@@ -143,7 +143,7 @@ _True_
 
 **Required channel permission**: `watch_channel_members_permission`
 
-### **GET** `/message/fetch`
+### **[POST]** `/message/fetch`
 
 #### Parameters:
 
@@ -156,7 +156,7 @@ _True_
 
 **Required channel permission**: `read_channel_permission`
 
-### **GET** `/message/send`
+### **[POST]** `/message/send`
 
 #### Parameters:
 
@@ -170,7 +170,7 @@ _True_
 
 ## Invitation API (`/api/invitation`)
 
-### **POST** `/delete`
+### **[POST]** `/delete`
 
 #### Parameters:
 
@@ -179,7 +179,7 @@ _True_
 #### Login required:
 _True_
 
-### **POST** `/use`
+### **[POST]** `/use`
 
 #### Parameters:
 

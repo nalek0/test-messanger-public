@@ -16,7 +16,7 @@
 
 {% block main_content %}
     <div class="main_part">
-        {% if client_user is defined and user.id == client_user.id %}
+        {% if not client_user.is_anonymous and user.id == client_user.id %}
             <i>Here you can see, how other people see your profile page:</i>
         {% endif %}
         <h1>Profile:</h1>
