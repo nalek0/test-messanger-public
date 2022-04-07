@@ -34,17 +34,11 @@
             <div class="label">Invitations:</div>
             {% for invitation in client_user.user_invitations %}
             <div class="invitation">
-                <div class="channel_title">
-                    {{ invitation.channel.title }}
-                </div>
-                <input type="submit"
-                       class="base_input base_submit_input"
-                       value="Use this invitation"
-                       onclick="use_invitation({{ invitation.id }})">
-                <input type="submit"
-                       class="base_input base_submit_input"
-                       value="Delete this invitation"
-                       onclick="delete_invitation({{ invitation.id }})">
+                <div class="channel_title">{{ invitation.channel.title }}</div>
+                <div class="base_input base_submit_input"
+                     onclick="use_invitation({{ invitation.id }})">Use this invitation</div>
+                <div class="base_input base_submit_input"
+                     onclick="delete_invitation({{ invitation.id }})">Delete this invitation</div>
             </div>
             {% endfor %}
             <div class="base_input base_submit_input" onclick="update_profile(this)">Send changes</div>

@@ -148,14 +148,14 @@ class ChannelInvitation {
 
 	static useInvitation(invitation_id) {
 		return makeAPIRequest(
-			"/api/channel/invitation/use",
+			"/api/invitation/use",
 			{ "invitation_id": invitation_id }
 		);
 	}
 
 	static deleteInvitation(invitation_id) {
 		return makeAPIRequest(
-			"/api/channel/invitation/delete",
+			"/api/invitation/delete",
 			{ "invitation_id": invitation_id }
 		);
 	}

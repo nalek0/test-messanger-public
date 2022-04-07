@@ -41,8 +41,6 @@
 .base_submit_input {
     display: inline-block;
     cursor: pointer;
-    margin-left: auto;
-    margin-right: auto;
 }
 .base_submit_input:hover {
     background: var(--lighten-accent-color);
