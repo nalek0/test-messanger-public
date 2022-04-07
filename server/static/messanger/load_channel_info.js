@@ -2,19 +2,12 @@ var client;
 var channel;
 
 async function update_channel(button) {
-	let data = {}
-	Array.from(button.parentNode.childNodes)
-			.filter( node => {
-				return node.tagName && (
-					(
-						node.tagName.toLowerCase() === "input" && 
-						(node.getAttribute("type") === "text" || node.getAttribute("type") === "hidden")
-					) || node.tagName.toLowerCase() === "textarea"
-				);
-			})
-			.forEach( node => data[node.getAttribute("name")] = node.value )
+	let formData = new FormData(button.parentNode);
+	channel.title = formData.get("title");
+	channel.description = formData.get("description");
+
 	try {
-		await channel.updateChannelData(data);
+		await channel.update();
 		pushMessagesList.addMessage(new PushMessage("Saved", "ok_message"));
 	} catch (error) {
 		if (error.status === 400 || error.status === 404)
@@ -41,6 +34,7 @@ window.addEventListener("load", async () => {
 				liWrapper.appendChild(node);
 				moderatorsListNode.appendChild(liWrapper);
 			});
+			
 
 
 		let membersListNode = document.getElementById("members_list");

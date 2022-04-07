@@ -70,7 +70,7 @@ class Channel {
 		this.roles 			= data.roles.map( it => new ChannelRole(it) );
 	}
 
-	updateChannelData() {
+	update() {
 		return makeAPIRequest(
 			"/api/channel/update",
 			{

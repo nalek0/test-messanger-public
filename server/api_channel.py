@@ -45,7 +45,7 @@ def update_channel():
     title = request.json.get("title")
     if title is not None:
         channel.title = title.strip()
-    description = request.json.get("title")
+    description = request.json.get("description")
     if description is not None:
         channel.description = description.strip()
 
@@ -112,9 +112,6 @@ def fetch_members():
     # Searching permissions:
     permissions = request.json.get("permissions")
     if permissions is not None:
-        if permissions is not List[str]:
-            raise APIBadRequest("permissions must be List[str]")
-
         results = list(filter(
             lambda channel_member: all(map(lambda permission: channel_member.has_permission(permission), permissions)),
             results
@@ -122,9 +119,9 @@ def fetch_members():
 
     page = request.json.get("page") or 0
     page_results = request.json.get("page_results") or 20
-    if page is not int or page < 0:
+    if page < 0:
         raise APIBadRequest("Wrong page parameter")
-    if page_results is not int or page_results <= 0 or page_results > 50:
+    if page_results <= 0 or page_results > 50:
         raise APIBadRequest("Wrong page_results parameter")
 
     results_on_page = results[page * page_results:

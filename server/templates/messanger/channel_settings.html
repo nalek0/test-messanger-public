@@ -26,18 +26,20 @@
         </ul>
     </div>
     <div class="moderator_block settings_block hidden" id="moderator_block">
-        <input type="hidden" name="channel_id" value="{{ channel.id }}">
-        <div class="label">Channel title:</div>
-        <input type="text"
-               name="title"
-               class="base_input base_text_input"
-               value="{{ channel.title }}"
-               maxlength="80"/>
-        <div class="label">Channel description:</div>
-        <textarea name="description"
-                  class="base_input base_textarea accent-scrollbar"
-                  maxlength="400">{{ channel.description }}</textarea>
-        <input type="submit" value="Send changes" class="base_input base_submit_input" onclick="update_channel(this)">
+        <form>
+            <input type="hidden" name="channel_id" value="{{ channel.id }}">
+            <div class="label">Channel title:</div>
+            <input type="text"
+                   name="title"
+                   class="base_input base_text_input"
+                   value="{{ channel.title }}"
+                   maxlength="80"/>
+            <div class="label">Channel description:</div>
+            <textarea name="description"
+                      class="base_input base_textarea accent-scrollbar"
+                      maxlength="400">{{ channel.description }}</textarea>
+            <div class="base_input base_submit_input" onclick="update_channel(this)">Send changes</div>
+        </form>
     </div>
 </div>
 {% endblock %}
