@@ -20,7 +20,7 @@ async function update_profile(button) {
 	client.last_name = formData.get("last_name");
 	client.description = formData.get("description");
 
-	// try {
+	try {
 		await client.update();
 
 		let file = formData.get("avatar");
@@ -29,15 +29,13 @@ async function update_profile(button) {
 			await client.updateAvatar(base64String);
 		}
 
-		console.log(client);
-
-		pushMessagesList.addMessage(new PushMessage("Saved", "ok_message"));
-	// } catch (error) {
-	// 	if (error.status === 400 || error.status === 404)
-	// 		pushMessagesList.addMessage(new PushMessage("Something is wrong with your parameters", "error"));
-	// 	else 
-	// 		pushMessagesList.addMessage(new PushMessage("Error, try again later", "error"));
-	// }
+		window.location.href = window.location.href;
+	} catch (error) {
+		if (error.status === 400 || error.status === 404)
+			pushMessagesList.addMessage(new PushMessage("Something is wrong with your parameters", "error"));
+		else 
+			pushMessagesList.addMessage(new PushMessage("Error, try again later", "error"));
+	}
 }
 
 async function use_invitation(invitation_id) {

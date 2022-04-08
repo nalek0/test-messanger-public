@@ -15,25 +15,36 @@
 {% block main_content %}
     <div class="main_part">
         <form class="profile">
-            <div class="label">First name:</div>
-            <input type="text"
-                   name="first_name"
-                   class="base_input base_text_input"
-                   value="{{ client_user.first_name }}"
-                   minlength="1" maxlength="80"/>
-            <div class="label">Last name:</div>
-            <input type="text"
-                   name="last_name"
-                   class="base_input base_text_input"
-                   value="{{ client_user.last_name }}"
-                   minlength="1" maxlength="80"/>
-            <div class="label">Description:</div>
+            <div class="top_form_part">
+                <div class="avatar_part">
+                    {% if client_user.avatar_big is not none %}
+                        <img src="{{ client_user.avatar_big }}" alt="avatar" class="profile_avatar">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='default_avatar.png') }}" alt="avatar" class="profile_avatar">
+                    {% endif %}
+                </div>
+                <div class="info_part">
+                    <div class="form-label">First name:</div>
+                    <input type="text"
+                           name="first_name"
+                           class="base_input base_text_input"
+                           value="{{ client_user.first_name }}"
+                           minlength="1" maxlength="80"/>
+                    <div class="form-label">Last name:</div>
+                    <input type="text"
+                           name="last_name"
+                           class="base_input base_text_input"
+                           value="{{ client_user.last_name }}"
+                           minlength="1" maxlength="80"/>
+                </div>
+            </div>
+            <div class="form-label">Description:</div>
             <textarea name="description"
                       class="base_input base_textarea accent-scrollbar"
                       maxlength="400">{{ client_user.description }}</textarea>
-            <div class="label">Set your avatar:</div>
+            <div class="form-label">Set your avatar:</div>
             <input type="file" name="avatar" />
-            <div class="label">Invitations:</div>
+            <div class="form-label">Invitations:</div>
             {% for invitation in client_user.user_invitations %}
             <div class="invitation">
                 <div class="channel_title">{{ invitation.channel.title }}</div>

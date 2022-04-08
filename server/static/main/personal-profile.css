@@ -2,7 +2,7 @@
     text-align: center;
 }
 
-.profile > .label {
+.form-label {
     text-align: left;
 }
 
@@ -25,4 +25,28 @@
     margin-left: 0.25rem;
     width: 100%;
     text-align: left;
+}
+
+.top_form_part {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    height: 128px;
+    margin-bottom: 0.5rem;
+}
+
+.top_form_part > .avatar_part {
+    height: inherit;
+    margin-right: 0.5rem;
+}
+
+.top_form_part > .info_part {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-around;
+}
+
+.profile_avatar {
+    height: 100%;
+    border-bottom-right-radius: 1rem;
 }
