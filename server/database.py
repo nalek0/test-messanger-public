@@ -56,6 +56,17 @@ class User(UserMixin, db.Model, Serializable):
                                        backref='user',
                                        lazy=True)
 
+    avatar_id = db.Column(db.Integer, nullable=True, default=None)
+    avatar_big = db.Column(db.String(100), nullable=True, default=None)
+    avatar_medium = db.Column(db.String(100), nullable=True, default=None)
+    avatar_small = db.Column(db.String(100), nullable=True, default=None)
+
+    def set_avatar(self, data: dict) -> None:
+        self.avatar_id = data["id"]
+        self.avatar_big = data["thumbnails"]["512"]["url"]
+        self.avatar_medium = data["thumbnails"]["128"]["url"]
+        self.avatar_small = data["thumbnails"]["32"]["url"]
+
     @property
     def profile_url(self) -> str:
         return url_for("main.profile", username=self.username)
@@ -79,7 +90,12 @@ class User(UserMixin, db.Model, Serializable):
             "last_name": self.last_name,
             "username": self.username,
             "description": self.description,
-            "profile_url": self.profile_url
+            "profile_url": self.profile_url,
+            "avatar": {
+                "big": self.avatar_big,
+                "medium": self.avatar_medium,
+                "small": self.avatar_small
+            }
         }
 
     def private_json(self) -> dict:
@@ -90,6 +106,11 @@ class User(UserMixin, db.Model, Serializable):
             "username": self.username,
             "description": self.description,
             "profile_url": self.profile_url,
+            "avatar": {
+                "big": self.avatar_big,
+                "medium": self.avatar_medium,
+                "small": self.avatar_small
+            },
             "channels": serialize_list(self.channels),
             "friends": serialize_list(self.friends)
         }

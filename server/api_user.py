@@ -1,11 +1,14 @@
 import hashlib
 import json
 
+import requests as requests
 from flask import Blueprint, request
 from flask_login import login_required, current_user, login_user, logout_user
+from werkzeug.exceptions import abort
 
 from api_exceptions import APINotFound, APIBadRequest, APIForbidden
 from database import User, db
+from apis_urls import APIS_CONFIG
 
 user_api = Blueprint("user_api", __name__,
                      url_prefix="/user")
@@ -97,11 +100,19 @@ def update_profile():
     if request.json.get("description") is not None:
         description = request.json.get("description").strip()
         current_user.description = description
+    if request.json.get("avatar") is not None:
+        image_base64 = request.json.get("avatar")
+        response = requests.post(url=f"{APIS_CONFIG['OtherAPI']['ImageProcessing']}/api/image/add",
+                                 json={"image": image_base64},
+                                 timeout=2)
+        if response.status_code not in range(200, 300):
+            return abort(response.status_code)
+        current_user.set_avatar(response.json())
 
     db.session.commit()
     current_user.updated()
 
-    return {"description": "OK"}
+    return current_user.private_json()
 
 
 @user_api.route("/client/friend/add", methods=["POST"])

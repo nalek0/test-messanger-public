@@ -31,6 +31,8 @@
             <textarea name="description"
                       class="base_input base_textarea accent-scrollbar"
                       maxlength="400">{{ client_user.description }}</textarea>
+            <div class="label">Set your avatar:</div>
+            <input type="file" name="avatar" />
             <div class="label">Invitations:</div>
             {% for invitation in client_user.user_invitations %}
             <div class="invitation">

@@ -1,3 +1,11 @@
+class AvatarAsset {
+	constructor(data) {
+		this.big 	= data.big;
+		this.medium = data.medium;
+		this.small 	= data.small;
+	}
+}
+
 class User {
 	constructor(data) {
         this.id = data.id;
@@ -6,6 +14,7 @@ class User {
         this.username 		= data.username;
         this.description 	= data.description;
         this.profile_url 	= data.profile_url;
+        this.avatar 		= new AvatarAsset(data.avatar);
 	}
 
 	getFullName() {
@@ -195,6 +204,13 @@ class Client extends User {
 				"description": this.description
 			}
 		);
+	}
+
+	updateAvatar(base64String) {
+		return makeAPIRequest(
+			"/api/user/client/update",
+			{ "avatar": base64String }
+		).then ( response => this.avatar = new AvatarAsset(JSON.parse(response).avatar) );
 	}
 
 	static signup(first_name, last_name, username, password) {
