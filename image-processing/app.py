@@ -3,7 +3,6 @@ from configparser import ConfigParser
 from flask import Flask
 
 from api import api as api_blueprint
-from pages import pages as test_pages_blueprint
 from database import db
 
 CONFIG = ConfigParser()
@@ -17,7 +16,6 @@ def create_app():
 
     db.init_app(app)
 
-    app.register_blueprint(test_pages_blueprint)
     app.register_blueprint(api_blueprint)
 
     return app
