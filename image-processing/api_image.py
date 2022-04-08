@@ -5,7 +5,7 @@ from flask import Blueprint, request, make_response
 
 from database import ImageTable, db
 
-image_api = Blueprint("api", __name__,
+image_api = Blueprint("image_api", __name__,
                       url_prefix="/image")
 
 
@@ -24,9 +24,15 @@ def get_image(image_id: int, size: int):
     return response
 
 
+@image_api.route("/get/data/<int:image_id>")
+def get_image_data(image_id: int):
+    return ImageTable.query.get_or_404(image_id).json()
+
+
 @image_api.route("/add", methods=["POST"])
 def add_image():
     base64_code = re.sub('^data:image/.+;base64,', '', request.json['image'])
-    db.session.add(ImageTable().load(base64_code))
+    image_table = ImageTable().load(base64_code)
+    db.session.add(image_table)
     db.session.commit()
-    return "OK"
+    return image_table.json()

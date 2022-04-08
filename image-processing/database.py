@@ -3,6 +3,7 @@ from io import BytesIO
 from typing import Tuple
 
 from PIL import Image
+from flask import url_for
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -81,3 +82,17 @@ class ImageTable(db.Model):
             image.thumbnail((size, size))
             self.set_image(size, image)
         return self
+
+    def get_thumbnail_json(self, size: int) -> dict:
+        return {
+            "url": url_for("api.image_api.get_image", image_id=self.id, size=size, _external=True)
+        }
+
+    def json(self) -> dict:
+        thumbnails = {}
+        for sz in self.sizes:
+            thumbnails[str(sz)] = self.get_thumbnail_json(sz)
+        return {
+            "id": self.id,
+            "thumbnails": thumbnails
+        }
