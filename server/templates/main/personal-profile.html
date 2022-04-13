@@ -17,11 +17,7 @@
         <form class="profile">
             <div class="top_form_part">
                 <div class="avatar_part">
-                    {% if client_user.avatar_big is not none %}
-                        <img src="{{ client_user.avatar_big }}" alt="avatar" class="profile_avatar">
-                    {% else %}
-                        <img src="{{ url_for('static', filename='default_avatar.png') }}" alt="avatar" class="profile_avatar">
-                    {% endif %}
+                    <img src="{{ client_user.get_avatar_big_or('default_avatar.png') }}" alt="avatar" class="profile_avatar">
                 </div>
                 <div class="info_part">
                     <div class="form-label">First name:</div>

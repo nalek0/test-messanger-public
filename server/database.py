@@ -61,6 +61,15 @@ class User(UserMixin, db.Model, Serializable):
     avatar_medium = db.Column(db.String(100), nullable=True, default=None)
     avatar_small = db.Column(db.String(100), nullable=True, default=None)
 
+    def get_avatar_big_or(self, default: str) -> str:
+        return self.avatar_big or default
+
+    def get_avatar_medium_or(self, default: str) -> str:
+        return self.avatar_medium or default
+
+    def get_avatar_small_or(self, default: str) -> str:
+        return self.avatar_small or default
+
     def set_avatar(self, data: dict) -> None:
         self.avatar_id = data["id"]
         self.avatar_big = data["thumbnails"]["512"]["url"]
