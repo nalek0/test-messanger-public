@@ -41,21 +41,32 @@ var messageList = null;
 let messagesWindow = null;
 
 function messageToNodeConverFunction(message) {
-	let message_node = document.createElement('div');
-	message_node.classList.add("message");
 
-	let author_node = document.createElement("div");
+	let author_node = document.createElement("a");
 	author_node.classList.add("author");
+	author_node.classList.add("link");
+	author_node.textContent = message.author.first_name + " " + message.author.last_name;
+	author_node.href = message.author.profile_url;
 
 	let message_text_node = document.createElement("div");
 	message_text_node.classList.add("paragraph");
 	message_text_node.classList.add("message_text");
-
-	author_node.textContent = message.author.first_name + " " + message.author.last_name;
 	message_text_node.textContent = message.text;
 
+	let avatar_node = document.createElement("div");
+	avatar_node.classList.add("avatar");
+	avatar_node.style.backgroundImage = `url(${message.author.avatar.small})`;
+	avatar_node.onclick = () => { window.location.href = message.author.profile_url; };
+
+	let content_node = document.createElement("div");
+	content_node.classList.add("content");
+	content_node.appendChild(avatar_node);
+	content_node.appendChild(message_text_node);
+
+	let message_node = document.createElement('div');
+	message_node.classList.add("message");
 	message_node.appendChild(author_node);
-	message_node.appendChild(message_text_node);
+	message_node.appendChild(content_node);
 	return message_node;
 }
 
