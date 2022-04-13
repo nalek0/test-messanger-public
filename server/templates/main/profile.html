@@ -10,6 +10,10 @@
     <script type="text/javascript">const USER_ID = {{ user.id }};</script>
 {% endblock %}
 
+{% block top_stylesheets %}
+    <link rel="stylesheet" href="{{ url_for('main.static', filename='profile.css') }}">
+{% endblock %}
+
 {% block title %}
     Profile {{ user.username }}
 {% endblock %}
@@ -19,10 +23,20 @@
         {% if not client_user.is_anonymous and user.id == client_user.id %}
             <i>Here you can see, how other people see your profile page:</i>
         {% endif %}
-        <h1>Profile:</h1>
-        <div class="paragraph">First name: {{ user.first_name }}</div>
-        <div class="paragraph">Last name: {{ user.last_name }}</div>
-        <div class="paragraph">Description: {{ user.description }}</div>
+
+        <div class="top_form_part">
+                <div class="avatar_part">
+                    <img src="{{ client_user.get_avatar_big_or('default_avatar.png') }}" alt="avatar" class="profile_avatar">
+                </div>
+                <div class="info_part">
+                    <div class="form-label">First name:</div>
+                    <div class="base_input base_text_input">{{ user.first_name }}</div>
+                    <div class="form-label">Last name:</div>
+                    <div class="base_input base_text_input">{{ user.last_name }}</div>
+                </div>
+            </div>
+        <div class="form-label">Description:</div>
+        <div class="base_input base_textarea accent-scrollbar">{{ user.description }}</div>
 
         {% if client_user is defined and user.id != client_user.id %}
             <div class="paragraph centered" id="friend-relationship">

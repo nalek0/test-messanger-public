@@ -30,6 +30,8 @@
     width: 100%;
     height: 5rem;
     resize: none;
+    white-space:pre-wrap;
+    overflow: auto;
 }
 
 .base_text_input {
