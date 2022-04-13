@@ -61,13 +61,13 @@ class User(UserMixin, db.Model, Serializable):
     avatar_medium = db.Column(db.String(100), nullable=True, default=None)
     avatar_small = db.Column(db.String(100), nullable=True, default=None)
 
-    def get_avatar_big_or(self, default: str) -> str:
+    def get_avatar_big(self, default: str = "/static/default_avatar.png") -> str:
         return self.avatar_big or default
 
-    def get_avatar_medium_or(self, default: str) -> str:
+    def get_avatar_medium(self, default: str = "/static/default_avatar.png") -> str:
         return self.avatar_medium or default
 
-    def get_avatar_small_or(self, default: str) -> str:
+    def get_avatar_small(self, default: str = "/static/default_avatar.png") -> str:
         return self.avatar_small or default
 
     def set_avatar(self, data: dict) -> None:
@@ -101,28 +101,17 @@ class User(UserMixin, db.Model, Serializable):
             "description": self.description,
             "profile_url": self.profile_url,
             "avatar": {
-                "big": self.avatar_big,
-                "medium": self.avatar_medium,
-                "small": self.avatar_small
+                "big": self.get_avatar_big(),
+                "medium": self.get_avatar_medium(),
+                "small": self.get_avatar_small()
             }
         }
 
     def private_json(self) -> dict:
-        return {
-            "id": self.id,
-            "first_name": self.first_name,
-            "last_name": self.last_name,
-            "username": self.username,
-            "description": self.description,
-            "profile_url": self.profile_url,
-            "avatar": {
-                "big": self.avatar_big,
-                "medium": self.avatar_medium,
-                "small": self.avatar_small
-            },
-            "channels": serialize_list(self.channels),
-            "friends": serialize_list(self.friends)
-        }
+        result = self.public_json()
+        result["channels"] = serialize_list(self.channels)
+        result["friends"] = serialize_list(self.friends)
+        return result
 
     def join_all_required_rooms(self) -> None:
         join_room(self.personal_private_room)
