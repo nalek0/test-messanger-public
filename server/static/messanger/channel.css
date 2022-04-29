@@ -36,10 +36,8 @@
 }
 
 .message .content {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: flex-start;
+    display: grid;
+    grid-template-columns: auto 1fr;
 }
 
 .message .content .avatar {
@@ -48,4 +46,9 @@
     border-radius: 20%;
     background-size: cover;
     cursor: pointer;
+}
+
+.message_text {
+    margin-left: 0.25rem;
+    word-break: break-word;
 }

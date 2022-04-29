@@ -42,7 +42,7 @@ def create_app():
         if request.path.startswith("/api"):
             return error, error.code
         else:
-            return redirect(url_for("auth.signup_get", errors=["You are not login yet"]))
+            return redirect(url_for("auth.signup_page", errors=["You are not login yet"]))
 
     return app
 
